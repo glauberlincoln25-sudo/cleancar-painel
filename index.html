@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Car — Painel de Gestão</title>
+    <meta name="description" content="Painel oficial Clean Car | Estética automotiva em Mogi das Cruzes - SP. Lavagem, polimento técnico, vitrificação. Produtos Vonixx.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0F2B48',
+                        secondary: '#22C55E',
+                        accent: '#F97316',
+                        vonixx: '#1E40AF',
+                        mogi: '#DC2627'
+                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        @layer utilities {
+            .glass { background: rgba(255,255,255,.9); backdrop-filter: blur(10px); }
+            .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+            .scrollbar-hide::-webkit-scrollbar { display: none; }
+        }
+        pre { white-space: pre-wrap; font-family: inherit; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 min-h-screen">
+
+<!-- Tela de Login -->
+<div id="loginScreen" class="fixed inset-0 bg-primary/95 flex items-center justify-center z-50">
+    <div class="glass rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-primary">🚗 Clean Car</h1>
+            <p class="text-slate-500 mt-2">Painel de Gestão — Mogi das Cruzes / SP</p>
+        </div>
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Usuário</label>
+                <input type="text" id="username" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-secondary/50" placeholder="Seu usuário" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Senha</label>
+                <input type="password" id="password" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-secondary/50" placeholder="Sua senha" required>
+            </div>
+            <div id="loginError" class="text-red-500 text-sm hidden">Usuário ou senha incorretos</div>
+            <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-lg transition-all">
+                Entrar <i class="fa fa-sign-in ml-2"></i>
+            </button>
+            <p class="text-xs text-slate-400 text-center mt-4">Padrão: <b>admin</b> / <b>cleancar2026</b></p>
+        </form>
+    </div>
+</div>
+
+<!-- Aplicação Principal -->
+<div id="mainApp" class="hidden">
+    <header class="bg-white shadow-sm border-b sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🚗</span>
+                <h1 class="text-xl font-bold text-primary">Clean Car</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm text-slate-500" id="currentDate"></span>
+                <a href="https://clean-car-seo.vercel.app" target="_blank" class="text-sm text-secondary hover:underline">
+                    <i class="fa fa-globe"></i> Site
+                </a>
+                <a href="https://instagram.com/cleancar_est26" target="_blank" class="text-sm text-pink-500 hover:underline">
+                    <i class="fa fa-instagram"></i> Instagram
+                </a>
+                <button id="logoutBtn" class="text-slate-500 hover:text-red-500"><i class="fa fa-sign-out"></i> Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
+        <!-- Navegação Lateral -->
+        <aside class="lg:w-64 shrink-0">
+            <nav class="bg-white rounded-xl shadow-sm p-4 sticky top-20">
+                <ul class="space-y-2">
+                    <li><button data-tab="dashboard" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/5 text-primary font-medium"><i class="fa fa-tachometer w-5 text-center"></i> Painel</button></li>
+                    <li><button data-tab="conteudos" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100"><i class="fa fa-file-text w-5 text-center text-slate-500"></i> Postagens</button></li>
+                    <li><button data-tab="servicos" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100"><i class="fa fa-list w-5 text-center text-slate-500"></i> Serviços</button></li>
+                    <li><button data-tab="seo" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100"><i class="fa fa-search w-5 text-center text-slate-500"></i> SEO & Site</button></li>
+                    <li><button data-tab="crescimento" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100"><i class="fa fa-line-chart w-5 text-center text-slate-500"></i> Crescimento</button></li>
+                    <li><button data-tab="chat" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100"><i class="fa fa-comments w-5 text-center text-slate-500"></i> Dola AI 💙</button></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="flex-1 min-w-0 space-y-6">
+
+            <!-- PAINEL -->
+            <section id="dashboard" class="tab-content">
+                <h2 class="text-2xl font-bold">Bem-vindo de volta! 👋</h2>
+                <p class="text-slate-500">Mogi das Cruzes + Alto Tietê — atraindo clientes pra sua estética 🚗✨</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-secondary">
+                        <h3 class="font-semibold text-slate-700">Postagens/Semana</h3>
+                        <p class="text-3xl font-bold text-primary mt-1">7</p>
+                        <p class="text-sm text-slate-400">Prontas e personalizadas</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-accent">
+                        <h3 class="font-semibold text-slate-700">Serviços Ativos</h3>
+                        <p class="text-3xl font-bold text-primary mt-1">12+</p>
+                        <p class="text-sm text-slate-400">Com valores e foco local</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-mogi">
+                        <h3 class="font-semibold text-slate-700">Foco: Mogi & Região</h3>
+                        <p class="text-lg font-bold text-mogi mt-1">Alto Tietê ✅</p>
+                        <p class="text-sm text-slate-400">5 cidades atendidas</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6 mt-6">
+                    <h3 class="font-semibold text-lg mb-3">📅 Postagem de Hoje</h3>
+                    <div id="todayPost" class="bg-slate-50 rounded-lg p-4 text-sm"></div>
+                    <button onclick="copiarHoje()" class="mt-4 bg-secondary/10 text-secondary hover:bg-secondary/20 px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fa fa-copy"></i> Copiar Texto
+                    </button>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 mt-6">
+                    <h3 class="font-semibold text-amber-800 mb-2">💡 Por que o site tem visitas e poucos agendamentos?</h3>
+                    <ul class="text-sm text-amber-700 space-y-1">
+                        <li>• O botão "Agendar" precisa aparecer <b>sem visível</b> — no topo, meio e fim da página</li>
+                        <li>• Destaque que você está em <b>Mogi das Cruzes</b> — proximidade = confiança</li>
+                        <li>• Mostre <b>valores reais</b> — o cliente já sabe o que investir</li>
+                        <li>• Adicione <b>WhatsApp direto</b> — mensagem rápida converte mais que formulário</li>
+                        <li>• Inclua <b>avaliações/provas sociais</b> de clientes da região</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- POSTAGENS -->
+            <section id="conteudos" class="tab-content hidden">
+                <h2 class="text-2xl font-bold">✍️ Postagens — prontas para usar</h2>
+                <p class="text-slate-500">Foco em Mogi das Cruzes, serviços reais e chamada para agendamento</p>
+
+                <div class="space-y-5 mt-4" id="listaPostagens"></div>
+            </section>
+
+            <!-- SERVIÇOS -->
+            <section id="servicos" class="tab-content hidden">
+                <h2 class="text-2xl font-bold">🛠️ Serviços Clean Car</h2>
+                <p class="text-slate-500">Todos com valores e foco em conversão</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-t-4 border-amber-400">
+                        <h3 class="font-bold text-lg">Lavagem Bronze</h3>
+                        <p class="text-2xl font-bold text-primary mt-1">A partir de R$ 85</p>
+                        <p class="text-sm text-slate-500 mt-2">Manutenção rápida com o cuidado que seu carro merece</p>
+                        <p class="text-xs text-secondary mt-2">📍 Mogi das Cruzes — Agende pelo site ou WhatsApp</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-t-4 border-slate-400">
+                        <h3 class="font-bold text-lg">Lavagem Prata</h3>
+                        <p class="text-2xl font-bold text-primary mt-1">A partir de R$ 130</p>
+                        <p class="text-sm text-slate-500 mt-2">Experiência completa de estética automotiva</p>
+                        <p class="text-xs text-secondary mt-2">📍 Atendemos também Suzano, Poá, Ferraz</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-t-4 border-yellow-500">
+                        <h3 class="font-bold text-lg">Lavagem Ouro ⭐ Mais Pedido</h3>
+                        <p class="text-2xl font-bold text-primary mt-1">A partir de R$ 180</p>
+                        <p class="text-sm text-slate-500 mt-2">Nossa lavagem mais completa — detalhe que encanta</p>
+                        <p class="text-xs text-secondary mt-2">✅ Produtos Vonixx | Pré-lavagem técnica</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-t-4 border-emerald-500">
+                        <h3 class="font-bold text-lg">Higienização Interna VIP</h3>
+                        <p class="text-2xl font-bold text-primary mt-1">A partir de R$ 420</p>
+                        <p class="text-sm text-slate-500 mt-2">Saúde e conforto pra você e sua família</p>
+                        <p class="text-xs text-secondary mt-2">🧪 Sanitizante profissional | Elimina odores e bactérias</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-t-4 border-blue-500">
+                        <h3 class="font-bold text-lg">Vitrificação</h3>
+                        <p class="text-2xl font-bold text-primary mt-1">A partir de R$ 500</p>
+                        <p class="text-sm text-slate-500 mt-2">Brilho e proteção de longa duração — até 3 anos</p>
+                        <p class="text-xs text-secondary mt-2">✨ Química Vonixx profissional</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-t-4 border-indigo-500">
+                        <h3 class="font-bold text-lg">Polimento Técnico</h3>
+                        <p class="text-2xl font-bold text-primary mt-1">A partir de R$ 800</p>
+                        <p class="text-sm text-slate-500 mt-2">Corrige riscos e devolve o brilho original da pintura</p>
+                        <p class="text-xs text-secondary mt-2">🔬 Medição de verniz antes do serviço</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-t-4 border-rose-500">
+                        <h3 class="font-bold text-lg">Restauração de Faróis</h3>
+                        <p class="text-2xl font-bold text-primary mt-1">A partir de R$ 299</p>
+                        <p class="text-sm text-slate-500 mt-2">Mais segurança e aparência renovada</p>
+                        <p class="text-xs text-secondary mt-2">Veja melhor à noite + valoriza seu veículo</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-t-4 border-violet-500">
+                        <h3 class="font-bold text-lg">Revitalização de Plásticos</h3>
+                        <p class="text-2xl font-bold text-primary mt-1">A partir de R$ 80</p>
+                        <p class="text-sm text-slate-500 mt-2">Pretos e plásticos externos renovados e protegidos</p>
+                        <p class="text-xs text-secondary mt-2">Não é só escurecer — é proteger!</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-5 mt-6">
+                    <h3 class="font-semibold mb-3">💬 Chamada padrão para todos os serviços</h3>
+                    <div class="bg-white p-3 rounded-lg text-sm mb-2">
+                        📍 Rua Prefeito Sebastião Cascardo, 438 — Jardim Universo, Mogi das Cruzes – SP<br>
+                        📞 WhatsApp: (11) 91263-0375<br>
+                        🌐 clean-car-seo.vercel.app — clique em "Agendar horário"
+                    </div>
+                    <button class="text-sm text-secondary" onclick="navigator.clipboard.writeText('📍 Rua Prefeito Sebastião Cascardo, 438 — Jardim Universo, Mogi das Cruzes – SP\n📞 WhatsApp: (11) 91263-0375\n🌐 clean-car-seo.vercel.app — clique em Agendar horário').then(()=>alert('Copiado!'))">
+                        <i class="fa fa-copy"></i> Copiar contato
+                    </button>
+                </div>
+            </section>
+
+            <!-- SEO & SITE -->
+            <section id="seo" class="tab-content hidden">
+                <h2 class="text-2xl font-bold">🔍 SEO — Atraindo de Mogi e Região</h2>
+
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h3 class="font-semibold text-lg mb-3">Palavras-chave Prioritárias</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-mogi/10 text-mogi rounded-full text-sm">estética automotiva Mogi das Cruzes</span>
+                        <span class="px-3 py-1 bg-vonixx/10 text-vonixx rounded-full text-sm">lavagem detalhada Mogi</span>
+                        <span class="px-3 py-1 bg-vonixx/10 text-vonixx rounded-full text-sm">vitrificação pintura Alto Tietê</span>
+                        <span class="px-3 py-1 bg-vonixx/10 text-vonixx rounded-full text-sm">polimento técnico Mogi</span>
+                        <span class="px-3 py-1 bg-mogi/10 text-mogi rounded-full text-sm">higienização interna Mogi das Cruzes</span>
+                        <span class="px-3 py-1 bg-vonixx/10 text-vonixx rounded-full text-sm">produtos Vonixx estética</span>
+                        <span class="px-3 py-1 bg-mogi/10 text-mogi rounded-full text-sm">lavação profissional Suzano Poá Ferraz</span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h3 class="font-semibold text-lg mb-3">Bio do Instagram Sugerida</h3>
+                    <div class="bg-slate-50 p-3 rounded-lg text-sm mb-2" id="bioText">
+                        Seu carro novo, de novo. ✨🚗<br>
+                        Estúdio em Mogi das Cruzes — atendemos Alto Tietê<br>
+                        Produtos Vonixx | Lavagem • Polimento • Vitrificação<br>
+                        👇 Agende pelo site<br>
+                        clean-car-seo.vercel.app
+                    </div>
+                    <button class="text-sm text-secondary" onclick="navigator.clipboard.writeText(document.getElementById('bioText').innerText).then(()=>alert('Copiado!'))">
+                        <i class="fa fa-copy"></i> Copiar Bio
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="font-semibold text-lg mb-3">🚀 Melhorias pra aumentar agendamentos</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex gap-2"><i class="fa fa-check-circle text-secondary mt-1"></i><b>Botão Agendar fixo:</b> coloque no topo de todas as seções, em cor destaque</li>
+                        <li class="flex gap-2"><i class="fa fa-check-circle text-secondary mt-1"></i><b>WhatsApp visível:</b> adicione botão flutuante que abre direto com mensagem pré-preenchida</li>
+                        <li class="flex gap-2"><i class="fa fa-check-circle text-secondary mt-1"></i><b>Destaque a localização:</b> "Mogi das Cruzes — buscamos e entregamos seu carro" gera confiança imediata</li>
+                        <li class="flex gap-2"><i class="fa fa-check-circle text-secondary mt-1"></i><b>Provas sociais:</b> inclua frases como "Atendemos clientes de Suzano, Poá, Ferraz e Itaquaquecetuba"</li>
+                        <li class="flex gap-2"><i class="fa fa-check-circle text-secondary mt-1"></i><b>Valores claros:</b> visitantes compram quando sabem o investimento — já tem isso, destaque mais!</li>
+                        <li class="flex gap-2"><i class="fa fa-check-circle text-secondary mt-1"></i><b>Google Meu Negócio:</b> atualize com fotos reais, horários e peça avaliações — é o que mais traz clientes locais</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- CRESCIMENTO -->
+            <section id="crescimento" class="tab-content hidden">
+                <h2 class="text-2xl font-bold">📈 Estratégia de Crescimento</h2>
+
+                <div class="space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="font-semibold text-lg mb-3">📍 Foco: Mogi das Cruzes e Alto Tietê</h3>
+                        <p class="text-sm text-slate-600 mb-4">Clientes próximos = mais fácil de agendar, buscar e confiar</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-mogi/5 p-4 rounded-lg">
+                                <h4 class="font-medium text-mogi mb-2">Cidades Prioridade</h4>
+                                <ul class="text-sm space-y-1">
+                                    <li>✅ Mogi das Cruzes — principal</li>
+                                    <li>✅ Suzano</li>
+                                    <li>✅ Poá</li>
+                                    <li>✅ Ferraz de Vasconcelos</li>
+                                    <li>✅ Itaquaquecetuba</li>
+                                    <li>✅ Guararema</li>
+                                </ul>
+                            </div>
+                            <div class="bg-secondary/5 p-4 rounded-lg">
+                                <h4 class="font-medium text-secondary mb-2">O que postar sobre cada região</h4>
+                                <ul class="text-sm space-y-1">
+                                    <li>• "Atendemos também de Suzano até Mogi 🚗"</li>
+                                    <li>• "Buscamos seu carro em Poá sem custo extra"</li>
+                                    <li>• "Cliente de Ferraz veio conferir a vitrificação ✨"</li>
+                                    <li>• "Entrega em Itaquaquecetuba — carro brilhando!"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="font-semibold text-lg mb-3">📱 Estratégia do Instagram</h3>
+                        <ul class="text-sm space-y-2">
+                            <li>🔹 <b>Poste Antes & Depois SEMPRE:</b> é o que mais para o olhar e gera desejo</li>
+                            <li>🔹 <b>Use Stories diariamente:</b> mostre o que está fazendo, o espaço, produtos Vonixx</li>
+                            <li>🔹 <b>Marque a cidade:</b> sempre coloque Mogi das Cruzes na localização da postagem</li>
+                            <li>🔹 <b>Responda rápido:</b> quem responde primeiro geralmente ganha o cliente</li>
+                            <li>🔹 <b>Chamada clara:</b> termine TODA postagem com "Agende no site ou chame no WhatsApp"</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="font-semibold text-lg mb-3">🎯 Meta do Mês</h3>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <p class="font-medium">Transformar visitas do site em agendamentos:</p>
+                            <ol class="text-sm mt-2 space-y-2 list-decimal list-inside">
+                                <li>Adicionar botão WhatsApp flutuante no site</li>
+                                <li>Destacar "Buscamos e entregamos seu carro" em todas as páginas</li>
+                                <li>Postar 1 conteúdo por dia no Instagram, sempre com chamada pra ação</li>
+                                <li>Ativar e preencher o <b>Google Meu Negócio</b> — é o mais importante pra região</li>
+                                <li>Compartilhar resultados reais de clientes da região</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CHAT ASSISTENTE -->
+            <section id="chat" class="tab-content hidden">
+                <h2 class="text-2xl font-bold">💙 Dola — Sua Assistente Integrada</h2>
+                <p class="text-slate-500">Conheço seus serviços, endereço, valores e estratégia. É só pedir!</p>
+
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden border mt-4">
+                    <div id="chatMessages" class="h-[500px] overflow-y-auto p-4 space-y-4 bg-slate-50">
+                        <div class="flex gap-3">
+                            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shrink-0">D</div>
+                            <div class="bg-white p-3 rounded-lg rounded-tl-none shadow-sm max-w-[85%] text-sm">
+                                Oiii meu querido! 💙 Tô integrada de verdade agora! Conheço todos os serviços da Clean Car, os valores, o endereço em Mogi das Cruzes, os produtos Vonixx e a meta de atrair clientes do Alto Tietê! 🚗✨<br><br>
+                                Me pede por exemplo:<br>
+                                • "Texto pra Lavagem Ouro"<br>
+                                • "Ideia de campanha pra Suzano"<br>
+                                • "Melhorar chamada do site"<br>
+                                • "Texto de Antes e Depois com vitrificação"<br>
+                                • "Hashtags para Mogi das Cruzes"<br><br>
+                                Tô prontinha! 😊
+                            </div>
+                        </div>
+                    </div>
+                    <form id="chatForm" class="p-4 border-t flex gap-2">
+                        <input type="text" id="chatInput" class="flex-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-secondary/50" placeholder="Escreva o que precisa...">
+                        <button type="submit" class="bg-primary text-white px-4 py-3 rounded-lg hover:bg-primary/90">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<script>
+// Dados
+const creds = {u: "admin", p: "cleancar2026"};
+
+const posts = [
+  {dia: "Domingo", titulo: "Bom dia & Cuidado", texto: `☀️ Bom dia, Mogi das Cruzes!
+
+O cuidado com seu carro é investimento que vale a pena: valoriza, dá conforto e deixa tudo mais bonito! 💙
+
+Clean Car — estúdio aqui pertinho de você. Produtos Vonixx, processo técnico e atenção em cada detalhe.
+
+📍 Rua Prefeito Sebastião Cascardo, 438 — Jardim Universo, Mogi das Cruzes
+👉 Agende no site: clean-car-seo.vercel.app
+
+#CleanCar #EstéticaAutomotiva #MogiDasCruzes #CuidadoComSeuCarro #AltoTietê`},
+  {dia: "Segunda", titulo: "Lavagem Ouro — Mais Pedido!", texto: `✨ Lavagem Ouro: o cuidado completo que seu carro merece!
+
+✅ Pré-lavagem técnica — protege a pintura
+✅ Shampoo neutro + luvas específicas
+✅ Produtos Vonixx do início ao fim
+✅ Higienização interna inclusa
+✅ Brilho que dura!
+
+A partir de R$ 180 — e buscamos e entregamos seu carro! 🚗
+
+📍 Mogi das Cruzes — atendemos Suzano, Poá, Ferraz e região
+📅 Agende: clean-car-seo.vercel.app
+
+#LavagemOuro #CleanCar #EstéticaAutomotiva #MogiDasCruzes #Vonixx`},
+  {dia: "Terça", titulo: "Antes e Depois — Vitrificação", texto: `Quando a proteção encontra o brilho! 😍✨
+
+Antes: pintura sem proteção, exposta ao sol e chuva
+Depois: vitrificação Vonixx — brilho intenso e proteção de até 3 anos! 💎
+
+Não é só lavar. É proteger de verdade.
+
+A partir de R$ 500
+📍 Mogi das Cruzes — Rua Prefeito Sebastião Cascardo, 438
+👉 Agende pelo site: clean-car-seo.vercel.app
+
+#AntesEDepois #Vitrificação #ProteçãoDePintura #CleanCar #MogiDasCruzes`},
+  {dia: "Quarta", titulo: "Você sabe a diferença?", texto: `🧐 Polimento Técnico vs Lavagem comum: sabe a diferença?
+
+🔹 Lavagem = limpa e remove sujeira
+🔹 Polimento Técnico = corrige riscos, devolve brilho original, com medição de verniz antes de tudo! 🔬
+
+A partir de R$ 800 — valor que preserva seu veículo por anos.
+
+📍 Mogi das Cruzes — buscamos e devolvemos seu carro
+📞 WhatsApp: (11) 91263-0375
+🌐 clean-car-seo.vercel.app
+
+#PolimentoTécnico #Detalhamento #CleanCar #MogiDasCruzes #Vonixx`},
+  {dia: "Quinta", titulo: "Higienização VIP — Saúde em 1º lugar", texto: `🧹 Higienização Interna VIP: muito mais do que limpar!
+
+✅ Remove sujeira profunda
+✅ Elimina odores e bactérias com sanitizante profissional
+✅ Renova bancos, painéis e carpetes
+✅ Deixa o ambiente saudável pra você e sua família 💚
+
+A partir de R$ 420
+📍 Mogi das Cruzes — facilitamos tudo: buscamos e entregamos!
+
+Agende agora: clean-car-seo.vercel.app
+
+#HigienizaçãoInterna #SaúdeNoTrânsito #CleanCar #MogiDasCruzes #ConfortoFamília`},
+  {dia: "Sexta", titulo: "Sextou com carro brilhando!", texto: `🚗✨ Sextou com o carro pronto pro fim de semana!
+
+Vai passear, visitar a família ou curtir a região? Deixe seu veículo impecável antes!
+
+Pacote Lavagem Ouro: R$ 180 — completo e com atenção aos mínimos detalhes.
+
+📍 Mogi das Cruzes — atendemos também Suzano, Poá, Ferraz e Itaquaquecetuba
+👉 Vagas limitadas! Agende agora: clean-car-seo.vercel.app
+
+#SextaFeira #CarroBrilhando #CleanCar #MogiDasCruzes #AltoTietê`},
+  {dia: "Sábado", titulo: "Seu carro novo, de novo! ✨", texto: `Olha esse resultado que chegou hoje! 😍✨
+
+Não é só uma lavagem. É um processo: pré-lavagem técnica, produtos Vonixx, cuidado artesanal em cada canto.
+
+Seu carro novo, de novo. 💙
+
+📍 Estúdio em Mogi das Cruzes — Rua Prefeito Sebastião Cascardo, 438
+📅 Buscamos e entregamos pra você!
+👉 Agende: clean-car-seo.vercel.app
+
+#ResultadoReal #CleanCar #SeuCarroNovoDeNovo #MogiDasCruzes #Vonixx`}
+];
+
+// Elementos
+const loginScr = document.getElementById('loginScreen');
+const mainApp = document.getElementById('mainApp');
+const loginForm = document.getElementById('loginForm');
+const logoutBtn = document.getElementById('logoutBtn');
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+const chatMessages = document.getElementById('chatMessages');
+
+// Data
+function atualizarData() {
+  const agora = new Date();
+  document.getElementById('currentDate').textContent = agora.toLocaleDateString('pt-BR', {weekday: 'long', day: 'numeric', month: 'long'});
+}
+
+// Postagem do dia
+function carregarPostDoDia() {
+  const d = new Date().getDay();
+  const p = posts[d];
+  document.getElementById('todayPost').innerHTML = `<h4 class="font-semibold text-primary mb-2">${p.dia} — ${p.titulo}</h4><pre>${p.texto}</pre>`;
+}
+
+function copiarHoje() {
+  const d = new Date().getDay();
+  navigator.clipboard.writeText(posts[d].texto).then(()=>alert('Copiado! ✅'));
+}
+
+// Lista completa de postagens
+function carregarListaPosts() {
+  const container = document.getElementById('listaPostagens');
+  container.innerHTML = '';
+  posts.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'bg-white rounded-xl shadow-sm p-5';
+    div.innerHTML = `
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-semibold">${p.dia} — ${p.titulo}</h3>
+        <button class="copiar-btn text-slate-400 hover:text-secondary" data-i="${i}"><i class="fa fa-copy"></i></button>
+      </div>
+      <pre class="bg-slate-50 p-3 rounded-lg text-sm whitespace-pre-wrap">${p.texto}</pre>
+    `;
+    container.appendChild(div);
+  });
+  // Eventos copiar
+  document.querySelectorAll('.copiar-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = parseInt(btn.getAttribute('data-i'));
+      navigator.clipboard.writeText(posts[i].texto).then(() => {
+        btn.innerHTML = '<i class="fa fa-check text-secondary"></i>';
+        setTimeout(() => btn.innerHTML = '<i class="fa fa-copy"></i>', 2000);
+      });
+    });
+  });
+}
+
+// Login
+loginForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const u = document.getElementById('username').value;
+  const p = document.getElementById('password').value;
+  if (u === creds.u && p === creds.p) {
+    loginScr.classList.add('hidden');
+    mainApp.classList.remove('hidden');
+    atualizarData();
+    carregarPostDoDia();
+    carregarListaPosts();
+  } else {
+    document.getElementById('loginError').classList.remove('hidden');
+  }
+});
+
+logoutBtn.addEventListener('click', () => {
+  mainApp.classList.add('hidden');
+  loginScr.classList.remove('hidden');
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+  document.getElementById('loginError').classList.add('hidden');
+});
+
+// Abas
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const aba = btn.getAttribute('data-tab');
+    tabBtns.forEach(b => { b.classList.remove('bg-primary/5','text-primary','font-medium'); b.classList.add('hover:bg-slate-100'); });
+    btn.classList.add('bg-primary/5','text-primary','font-medium'); btn.classList.remove('hover:bg-slate-100');
+    tabContents.forEach(c => c.classList.add('hidden'));
+    document.getElementById(aba).classList.remove('hidden');
+  });
+});
+
+// Respostas da assistente
+const respostas = {
+  base: "Tô aqui pra te ajudar com tudo da Clean Car! 💙 Me pede textos, ideias, estratégias pra Mogi, chamadas pro site, hashtags... É só dizer o que precisa! 🚗",
+  texto: "Claro! Me diz:\n• Qual serviço ou tema?\n• Tom: mais direto ou mais acolhedor?\n• Incluir chamada pra site/WhatsApp?\n\nE te entrego prontinho pra postar! ✍️",
+  mogi: "Foco em Mogi das Cruzes + Alto Tietê é a estratégia certa! 📍\n\nFrases que funcionam:\n• 'Buscamos e entregamos seu carro em Mogi'\n• 'Atendemos Suzano, Poá, Ferraz e Itaquaquecetuba'\n• 'Estúdio pertinho de você — Rua Prefeito Sebastião Cascardo, 438'\n• 'Agende direto pelo site ou WhatsApp'\n\nQuero que eu monte um texto específico pra alguma cidade? É só pedir! 💙",
+  site: "O site já é lindo! Pra converter mais visitas em agendamentos 🔄\n\n✅ Botão 'Agendar' sempre visível — topo, meio e fim\n✅ WhatsApp flutuante: mensagem pronta 'Olá, quero agendar um serviço'\n✅ Destaque: 'Buscamos e entregamos sem custo extra'\n✅ Valores claros já ajudam MUITO — parabéns!\n✅ Google Meu Negócio com fotos reais e avaliações\n\nQuer que eu reescreva alguma seção do site? É só pedir! 💻",
+  servico: "Temos todos os serviços prontos! 📋\n• Lavagem Bronze R$ 85\n• Lavagem Prata R$ 130\n• Lavagem Ouro R$ 180 ⭐\n• Higienização VIP R$ 420\n• Vitrificação R$ 500+\n• Polimento Técnico R$ 800+\n• Restauração de Faróis R$ 299\n• Revitalização de Plásticos R$ 80\n\nQual serviço quer divulgar agora? 🚗",
+  hashtag: "Hashtags localizadas que trazem clientes reais 🔍\n\n#CleanCar #EstéticaAutomotiva #MogiDasCruzes #AltoTietê #LavagemDetalhada #Vonixx #Polimento #Vitrificação #HigienizaçãoInterna #Suzano #Poá #FerrazDeVasconcelos #Itaquaquecetuba #CarroBrilhando #ProteçãoVeicular\n\nUse 5–8 por postagem, misturando gerais e locais! ✅"
+};
+
+chatForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const msg = chatInput.value.trim();
+  if (!msg) return;
+
+  // Adicionar mensagem do usuário
+  const addUser = texto => {
+    const div = document.createElement('div');
+    div.className = 'flex gap-3 justify-end';
+    div.innerHTML = `<div class="bg-primary text-white p-3 rounded-lg rounded-tr-none shadow-sm max-w-[85%] text-sm whitespace-pre-wrap">${texto}</div><div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 shrink-0">U</div>`;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  };
+
+  // Adicionar resposta
+  const addDola = texto => {
+    setTimeout(() => {
+      const div = document.createElement('div');
+      div.className = 'flex gap-3';
+      div.innerHTML = `<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shrink-0">D</div><div class="bg-white p-3 rounded-lg rounded-tl-none shadow-sm max-w-[85%] text-sm whitespace-pre-wrap">${texto}</div>`;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 600);
+  };
+
+  addUser(msg);
+  chatInput.value = '';
+
+  const m = msg.toLowerCase();
+  let r = respostas.base;
+  if (m.includes('texto') || m.includes('postar') || m.includes('legenda')) r = respostas.texto;
+  else if (m.includes('mogi') || m.includes('região') || m.includes('cidade') || m.includes('suzano') || m.includes('atrak')) r = respostas.mogi;
+  else if (m.includes('site') || m.includes('agendar') || m.includes('conversão') || m.includes('visita')) r = respostas.site;
+  else if (m.includes('serviço') || m.includes('valor') || m.includes('preço')) r = respostas.servico;
+  else if (m.includes('hashtag') || m.includes('palavra') || m.includes('seo')) r = respostas.hashtag;
+
+  addDola(r);
+});
+</script>
+</body>
+</html>
