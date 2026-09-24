@@ -20,77 +20,132 @@ function geraTextoServico(chave) {
   return `${s.nome}\nDe ${s.de} → ${s.por}\n\n${s.itens.join('\n')}\n\n👉 Agende: ${CONFIG.LINK_AGENDAMENTO}`;
 }
 
-function geraPromptImagemPersonalizado(pedido, servico, formato) {
+function geraPromptImagem(pedido, servico, formato) {
   const proporcao = formato === 'feed' ? 'quadrada 1:1' : 'vertical 9:16';
   const s = SERVICOS[servico];
   
-  // Se o pedido tiver detalhes específicos, usa eles
-  let detalhes = pedido;
+  let descricao = pedido;
   if (pedido.length < 15 || pedido.includes(s.nome)) {
-    detalhes = `Arte profissional Clean Car — ${s.nome}, ${CAMPANHA}, carro brilhante e limpo, produtos Vonixx, fundo azul e branco, logo visível`;
+    descricao = `Arte profissional Clean Car — ${s.nome}, ${CAMPANHA}, carro brilhante e limpo, produtos Vonixx, fundo azul e branco, logo visível, iluminação profissional, alta qualidade`;
   }
   
-  return `Imagem ${proporcao}, ${detalhes}. Destaque: ${s.nome} — ${s.por} (15% OFF). Link: ${CONFIG.LINK_AGENDAMENTO}`;
+  return `Imagem ${proporcao}, ${descricao}. Destaque: ${s.nome} — ${s.por} (15% OFF). Fundo elegante azul e branco, estilo profissional.`;
+}
+
+function codificaPrompt(texto) {
+  return encodeURIComponent(texto).replace(/%20/g, '+');
+}
+
+function geraUrlImagem(prompt, formato, modelo) {
+  const largura = formato === 'feed' ? 1024 : 576;
+  const altura = formato === 'feed' ? 1024 : 1024;
+  const promptCodificado = codificaPrompt(prompt);
+  return `https://image.pollinations.ai/prompt/${promptCodificado}?width=${largura}&height=${altura}&nologo=true&model=${modelo}&seed=${Math.floor(Math.random() * 999999)}`;
 }
 
 export function montarArte(container, { copiar, toast }, servicoChave, formato, pedidoTexto = '') {
   const servico = SERVICOS[servicoChave];
-  
-  // Usa o texto do pedido se foi fornecido, senão usa o padrão
   const textoFinal = pedidoTexto && pedidoTexto.length > 5 
     ? pedidoTexto 
     : geraTextoServico(servicoChave);
   
-  const promptImagem = geraPromptImagemPersonalizado(pedidoTexto || textoFinal, servicoChave, formato);
+  const promptBase = geraPromptImagem(pedidoTexto || textoFinal, servicoChave, formato);
+  const promptCompleto = `${promptBase} — Clean Car estética automotiva, Mogi das Cruzes, qualidade fotográfica`;
+
+  const urlImagem1 = geraUrlImagem(promptCompleto, formato, 'flux');
+  const urlImagem2 = geraUrlImagem(promptCompleto, formato, 'turbo');
 
   container.innerHTML = `
     <div class="bg-sky-50 rounded-xl p-4 border border-sky-100">
-      <h4 class="font-semibold text-primary mb-3">🎨 Arte — ${servico.nome}</h4>
+      <h4 class="font-semibold text-primary mb-4">🎨 Duas opções — escolha a melhor!</h4>
       
-      <div class="bg-white rounded-lg p-4 mb-4 text-center">
-        <p class="text-sm text-slate-500 mb-2">Visualização da estrutura:</p>
-        <div class="space-y-2">
-          <p class="font-bold text-lg text-cleandark">${CAMPANHA}</p>
-          <p class="font-semibold text-accent">${servico.nome}</p>
-          <p class="text-2xl font-bold text-primary">${servico.por}</p>
-          <p class="text-xs text-slate-400 line-through">De ${servico.de}</p>
-          <ul class="text-sm text-slate-600 mt-2 space-y-1">
-            ${servico.itens.map(i => `<li>✓ ${i}</li>`).join('')}
-          </ul>
-          <a href="${CONFIG.LINK_AGENDAMENTO}" target="_blank" class="inline-block mt-3 bg-secondary text-white px-4 py-2 rounded-full text-sm font-semibold">
-            Agendar <i class="fa fa-external-link ml-1"></i>
-          </a>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <!-- Opção 1 -->
+        <div class="bg-white rounded-lg p-3 border-2 border-transparent hover:border-primary transition-all cursor-pointer opcao-imagem" data-url="${urlImagem1}" data-id="1">
+          <p class="text-sm font-medium text-slate-600 mb-2">Opção 1 — Detalhada</p>
+          <div class="aspect-square bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden">
+            <img src="${urlImagem1}" alt="Opção 1" class="w-full h-full object-cover" loading="lazy" onload="this.parentElement.classList.remove('bg-slate-100')" onerror="this.parentElement.innerHTML='<p class=\\'text-sm text-slate-400\\'>Não carregou</p>'">
+          </div>
+          <button class="w-full mt-2 bg-primary text-white py-2 rounded-lg text-sm btn-usar-imagem" data-url="${urlImagem1}" data-formato="${formato}">
+            ✅ Usar esta
+          </button>
+        </div>
+
+        <!-- Opção 2 -->
+        <div class="bg-white rounded-lg p-3 border-2 border-transparent hover:border-secondary transition-all cursor-pointer opcao-imagem" data-url="${urlImagem2}" data-id="2">
+          <p class="text-sm font-medium text-slate-600 mb-2">Opção 2 — Rápida e Vibrante</p>
+          <div class="aspect-square bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden">
+            <img src="${urlImagem2}" alt="Opção 2" class="w-full h-full object-cover" loading="lazy" onload="this.parentElement.classList.remove('bg-slate-100')" onerror="this.parentElement.innerHTML='<p class=\\'text-sm text-slate-400\\'>Não carregou</p>'">
+          </div>
+          <button class="w-full mt-2 bg-secondary text-white py-2 rounded-lg text-sm btn-usar-imagem" data-url="${urlImagem2}" data-formato="${formato}">
+            ✅ Usar esta
+          </button>
         </div>
       </div>
-      
-      <div class="space-y-3">
+
+      <!-- Área de texto e prompt -->
+      <div class="space-y-4">
         <div>
           <p class="text-sm font-medium text-slate-700 mb-1">📝 Texto para legenda:</p>
-          <textarea class="w-full h-32 bg-white p-3 rounded-lg text-sm border" readonly>${textoFinal}</textarea>
+          <textarea id="textoArte" class="w-full h-32 bg-white p-3 rounded-lg text-sm border" readonly>${textoFinal}</textarea>
           <button class="mt-2 bg-primary text-white px-3 py-1 rounded text-sm" id="copiarTextoArte">
             <i class="fa fa-copy"></i> Copiar Texto
           </button>
         </div>
         
         <div>
-          <p class="text-sm font-medium text-slate-700 mb-1">🖼️ Prompt de imagem (${formato}):</p>
-          <textarea class="w-full h-32 bg-white p-3 rounded-lg text-sm border" readonly>${promptImagem}</textarea>
-          <button class="mt-2 bg-accent text-white px-3 py-1 rounded text-sm" id="copiarPromptArte">
-            <i class="fa fa-copy"></i> Copiar Prompt
-          </button>
+          <p class="text-sm font-medium text-slate-700 mb-1">💡 Prompt usado:</p>
+          <textarea class="w-full h-24 bg-white p-3 rounded-lg text-sm border text-slate-500" readonly>${promptCompleto}</textarea>
+        </div>
+
+        <!-- Imagem escolhida -->
+        <div id="caixaEscolhida" class="hidden mt-4 pt-4 border-t border-sky-200">
+          <p class="font-semibold text-green-600 mb-2">✅ Imagem escolhida!</p>
+          <img id="imagemEscolhida" class="max-w-xs rounded-lg shadow-md mb-3" alt="Imagem selecionada">
+          <div class="flex flex-wrap gap-2">
+            <a id="linkDownload" href="${urlImagem1}" download="cleancar-${formato}-${Date.now()}.jpg" target="_blank" class="bg-accent text-white px-4 py-2 rounded-lg text-sm">
+              <i class="fa fa-download"></i> Baixar Imagem
+            </a>
+            <button id="copiarTextoFinal" class="bg-primary text-white px-4 py-2 rounded-lg text-sm">
+              <i class="fa fa-copy"></i> Copiar Texto
+            </button>
+          </div>
         </div>
       </div>
     </div>
   `;
 
-  // Eventos de cópia
+  // Eventos
   container.querySelector('#copiarTextoArte').addEventListener('click', () => {
     copiar(textoFinal);
     toast('Texto copiado! ✅');
   });
-  
-  container.querySelector('#copiarPromptArte').addEventListener('click', () => {
-    copiar(promptImagem);
-    toast('Prompt copiado! ✅');
+
+  container.querySelectorAll('.btn-usar-imagem').forEach(botao => {
+    botao.addEventListener('click', () => {
+      const url = botao.dataset.url;
+      const caixa = container.querySelector('#caixaEscolhida');
+      const img = container.querySelector('#imagemEscolhida');
+      const link = container.querySelector('#linkDownload');
+      
+      img.src = url;
+      link.href = url;
+      caixa.classList.remove('hidden');
+      
+      // Destaque da escolhida
+      container.querySelectorAll('.opcao-imagem').forEach(bloco => {
+        bloco.classList.remove('border-primary', 'border-secondary');
+        bloco.classList.add('border-transparent');
+      });
+      botao.closest('.opcao-imagem').classList.remove('border-transparent');
+      botao.closest('.opcao-imagem').classList.add('border-green-500');
+      
+      toast('Imagem selecionada! ✅ Baixe e poste 💙');
+    });
+  });
+
+  container.querySelector('#copiarTextoFinal').addEventListener('click', () => {
+    copiar(textoFinal);
+    toast('Texto copiado! ✅');
   });
 }
