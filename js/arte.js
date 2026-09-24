@@ -15,112 +15,82 @@ export function achaServico(texto) {
   return 'ouro';
 }
 
-let logo;
-const carregarLogo = () => (logo ||= new Promise(ok => {
-  const i = new Image();
-  i.onload = () => ok(i);
-  i.onerror = () => ok(null);
-  i.src = 'assets/logo.png';
-}));
-
-function pill(c, x, y, w, h, cor) {
-  c.fillStyle = cor;
-  c.beginPath();
-  c.roundRect(x, y, w, h, h / 2);
-  c.fill();
+function geraTextoServico(chave) {
+  const s = SERVICOS[chave];
+  return `${s.nome}\nDe ${s.de} → ${s.por}\n\n${s.itens.join('\n')}\n\n👉 Agende: ${CONFIG.LINK_AGENDAMENTO}`;
 }
 
-export async function desenharArte(chave, formato) {
-  const s = SERVICOS[chave] || SERVICOS.ouro;
-  const W = 1080, H = formato === 'story' ? 1920 : 1080;
-  const cv = document.createElement('canvas');
-  cv.width = W; cv.height = H;
-  const c = cv.getContext('2d');
-  const f = 'Baloo 2, Nunito, Arial, sans-serif';
-
-  const fundo = c.createLinearGradient(0, 0, W * 0.4, H);
-  fundo.addColorStop(0, '#38bdf8'); fundo.addColorStop(1, '#075985');
-  c.fillStyle = fundo; c.fillRect(0, 0, W, H);
-
-  // espuma: bolhas translúcidas
-  for (let i = 0; i < 34; i++) {
-    const r = 14 + ((i * 37) % 60), x = (i * 211) % W, y = (i * 389) % H;
-    c.fillStyle = `rgba(255,255,255,${0.06 + (i % 4) * 0.04})`;
-    c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+function geraPromptImagemPersonalizado(pedido, servico, formato) {
+  const proporcao = formato === 'feed' ? 'quadrada 1:1' : 'vertical 9:16';
+  const s = SERVICOS[servico];
+  
+  // Se o pedido tiver detalhes específicos, usa eles
+  let detalhes = pedido;
+  if (pedido.length < 15 || pedido.includes(s.nome)) {
+    detalhes = `Arte profissional Clean Car — ${s.nome}, ${CAMPANHA}, carro brilhante e limpo, produtos Vonixx, fundo azul e branco, logo visível`;
   }
-
-  const topo = formato === 'story' ? 200 : 70;
-  const img = await carregarLogo();
-  const L = formato === 'story' ? 300 : 220;
-  c.save();
-  c.beginPath(); c.arc(W / 2, topo + L / 2, L / 2, 0, Math.PI * 2); c.closePath();
-  c.fillStyle = '#fff'; c.fill(); c.clip();
-  if (img) c.drawImage(img, W / 2 - L / 2, topo, L, L);
-  c.restore();
-  c.lineWidth = 8; c.strokeStyle = '#fff';
-  c.beginPath(); c.arc(W / 2, topo + L / 2, L / 2, 0, Math.PI * 2); c.stroke();
-
-  c.textAlign = 'center';
-  let y = topo + L + 70;
-  pill(c, W / 2 - 250, y, 500, 74, '#e11d48');
-  c.fillStyle = '#fff'; c.font = `800 40px ${f}`; c.fillText(CAMPANHA, W / 2, y + 52);
-
-  y += 170;
-  c.fillStyle = '#fff'; c.font = `800 92px ${f}`; c.fillText(s.nome, W / 2, y);
-
-  y += 80;
-  c.font = `600 40px ${f}`; c.fillStyle = 'rgba(255,255,255,.8)';
-  c.fillText(`de ${s.de}`, W / 2, y);
-  const tw = c.measureText(`de ${s.de}`).width;
-  c.fillRect(W / 2 - tw / 2, y - 14, tw, 4);
-
-  y += 150;
-  c.fillStyle = '#fff'; c.font = `800 150px ${f}`; c.fillText(s.por, W / 2, y);
-
-  y += 70;
-  c.font = `600 40px ${f}`;
-  s.itens.forEach((t, i) => c.fillText(`✔ ${t}`, W / 2, y + i * 56));
-
-  const base = H - (formato === 'story' ? 210 : 150);
-  pill(c, W / 2 - 330, base, 660, 84, '#22c55e');
-  c.fillStyle = '#fff'; c.font = `800 42px ${f}`; c.fillText('Agende pelo link da bio', W / 2, base + 57);
-  c.font = `600 30px ${f}`; c.fillStyle = 'rgba(255,255,255,.85)';
-  c.fillText('Clean Car · Mogi das Cruzes · @cleancar_est26', W / 2, base + 135);
-  return cv;
+  
+  return `Imagem ${proporcao}, ${detalhes}. Destaque: ${s.nome} — ${s.por} (15% OFF). Link: ${CONFIG.LINK_AGENDAMENTO}`;
 }
 
-export async function montarArte(alvo, { copiar, toast }, chave, formato) {
-  alvo.querySelector('.arte-wrap')?.remove();
-  const wrap = document.createElement('div');
-  wrap.className = 'arte-wrap mt-3';
-  wrap.textContent = 'Montando a arte…';
-  alvo.appendChild(wrap);
-  try { await document.fonts.load('800 40px "Baloo 2"'); } catch { /* segue com a fonte padrão */ }
-  const cv = await desenharArte(chave, formato);
-  cv.className = 'rounded-xl shadow-md w-full ' + (formato === 'story' ? 'max-w-[240px]' : 'max-w-[360px]');
+export function montarArte(container, { copiar, toast }, servicoChave, formato, pedidoTexto = '') {
+  const servico = SERVICOS[servicoChave];
+  
+  // Usa o texto do pedido se foi fornecido, senão usa o padrão
+  const textoFinal = pedidoTexto && pedidoTexto.length > 5 
+    ? pedidoTexto 
+    : geraTextoServico(servicoChave);
+  
+  const promptImagem = geraPromptImagemPersonalizado(pedidoTexto || textoFinal, servicoChave, formato);
 
-  const barra = document.createElement('div');
-  barra.className = 'flex flex-wrap gap-2 mt-2';
-  const nome = `cleancar-${chave}-${formato}.png`;
-  const botao = (rotulo, fn) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'bg-primary text-white px-3 py-1 rounded-lg text-sm';
-    b.innerHTML = rotulo;
-    b.addEventListener('click', fn);
-    barra.appendChild(b);
-  };
-  botao('<i class="fa fa-download"></i> Baixar PNG', () => {
-    const a = document.createElement('a');
-    a.download = nome; a.href = cv.toDataURL('image/png'); a.click();
+  container.innerHTML = `
+    <div class="bg-sky-50 rounded-xl p-4 border border-sky-100">
+      <h4 class="font-semibold text-primary mb-3">🎨 Arte — ${servico.nome}</h4>
+      
+      <div class="bg-white rounded-lg p-4 mb-4 text-center">
+        <p class="text-sm text-slate-500 mb-2">Visualização da estrutura:</p>
+        <div class="space-y-2">
+          <p class="font-bold text-lg text-cleandark">${CAMPANHA}</p>
+          <p class="font-semibold text-accent">${servico.nome}</p>
+          <p class="text-2xl font-bold text-primary">${servico.por}</p>
+          <p class="text-xs text-slate-400 line-through">De ${servico.de}</p>
+          <ul class="text-sm text-slate-600 mt-2 space-y-1">
+            ${servico.itens.map(i => `<li>✓ ${i}</li>`).join('')}
+          </ul>
+          <a href="${CONFIG.LINK_AGENDAMENTO}" target="_blank" class="inline-block mt-3 bg-secondary text-white px-4 py-2 rounded-full text-sm font-semibold">
+            Agendar <i class="fa fa-external-link ml-1"></i>
+          </a>
+        </div>
+      </div>
+      
+      <div class="space-y-3">
+        <div>
+          <p class="text-sm font-medium text-slate-700 mb-1">📝 Texto para legenda:</p>
+          <textarea class="w-full h-32 bg-white p-3 rounded-lg text-sm border" readonly>${textoFinal}</textarea>
+          <button class="mt-2 bg-primary text-white px-3 py-1 rounded text-sm" id="copiarTextoArte">
+            <i class="fa fa-copy"></i> Copiar Texto
+          </button>
+        </div>
+        
+        <div>
+          <p class="text-sm font-medium text-slate-700 mb-1">🖼️ Prompt de imagem (${formato}):</p>
+          <textarea class="w-full h-32 bg-white p-3 rounded-lg text-sm border" readonly>${promptImagem}</textarea>
+          <button class="mt-2 bg-accent text-white px-3 py-1 rounded text-sm" id="copiarPromptArte">
+            <i class="fa fa-copy"></i> Copiar Prompt
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Eventos de cópia
+  container.querySelector('#copiarTextoArte').addEventListener('click', () => {
+    copiar(textoFinal);
+    toast('Texto copiado! ✅');
   });
-  botao('<i class="fa fa-clipboard"></i> Copiar imagem', () => {
-    cv.toBlob(async b => {
-      try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); toast('Imagem copiada! Cole no Instagram ou WhatsApp ✅'); }
-      catch { toast('Seu navegador bloqueou copiar imagem. Use Baixar PNG.', 'erro'); }
-    });
+  
+  container.querySelector('#copiarPromptArte').addEventListener('click', () => {
+    copiar(promptImagem);
+    toast('Prompt copiado! ✅');
   });
-  botao('<i class="fa fa-whatsapp"></i> Texto + link', () => copiar(`${SERVICOS[chave].nome} — ${SERVICOS[chave].por}\n${CONFIG.LINK_AGENDAMENTO}`));
-  wrap.textContent = '';
-  wrap.append(cv, barra);
 }
