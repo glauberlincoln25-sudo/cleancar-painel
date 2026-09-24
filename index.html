@@ -21,10 +21,23 @@
             }
         }
     </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif}
+  .login-bg{background:radial-gradient(circle at 15% 20%,#38bdf8aa 0,transparent 45%),radial-gradient(circle at 85% 85%,#22c55e66 0,transparent 40%),linear-gradient(135deg,#0369a1,#0c4a6e)}
+  .app-header{background:linear-gradient(90deg,#0369a1,#0284c7)}
+  .card{transition:transform .2s,box-shadow .2s}
+  .card:hover{transform:translateY(-2px);box-shadow:0 12px 28px -12px rgba(3,105,161,.4)}
+  .tab-content:not(.hidden){animation:fadeUp .3s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  #toasts{position:fixed;bottom:1.25rem;right:1.25rem;z-index:100;display:flex;flex-direction:column;gap:.5rem}
+  .toast{color:#fff;padding:.7rem 1rem;border-radius:.75rem;font-size:.875rem;box-shadow:0 10px 25px -8px rgba(0,0,0,.35);animation:fadeUp .25s ease}
+  @media(max-width:1023px){nav{position:static!important}nav ul{display:flex;overflow-x:auto;gap:.5rem}nav ul li{flex:none}}
+</style>
 </head>
 <body class="bg-sky-50 font-sans min-h-screen">
 
-<div id="loginScreen" class="fixed inset-0 bg-cleandark/95 flex items-center justify-center z-50">
+<div id="loginScreen" class="login-bg fixed inset-0 flex items-center justify-center z-50 overflow-y-auto">
     <div class="bg-white/95 rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
         <div class="text-center mb-8">
             <div class="text-5xl mb-2">🚗✨</div>
@@ -76,21 +89,21 @@
 </div>
 
 <div id="mainApp" class="hidden">
-    <header class="bg-white shadow-sm border-b border-sky-100 sticky top-0 z-40">
+    <header class="app-header shadow-md sticky top-0 z-40">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <span class="text-2xl">🚗✨</span>
-                <h1 class="text-xl font-bold text-cleandark">Clean Car</h1>
+                <h1 class="text-xl font-bold text-white">Clean Car</h1>
             </div>
             <div class="flex items-center gap-3 text-sm">
-                <a href="https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva" target="_blank" rel="noopener" class="bg-secondary/10 text-secondary px-3 py-1 rounded-full font-medium">
+                <a href="https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva" target="_blank" rel="noopener" class="bg-white text-secondary px-3 py-1 rounded-full font-semibold shadow-sm">
                     <i class="fa fa-calendar-check-o"></i> Agendar
                 </a>
-                <a href="https://instagram.com/cleancar_est26" target="_blank" rel="noopener" class="text-pink-500 hover:underline">
+                <a href="https://instagram.com/cleancar_est26" target="_blank" rel="noopener" class="text-white text-lg hover:opacity-80">
                     <i class="fa fa-instagram"></i>
                 </a>
-                <span id="currentUserDisplay" class="text-xs text-slate-500"></span>
-                <button id="logoutBtn" class="text-slate-500 hover:text-red-500"><i class="fa fa-sign-out"></i></button>
+                <span id="currentUserDisplay" class="text-xs text-sky-100"></span>
+                <button id="logoutBtn" class="text-sky-100 hover:text-white" title="Sair"><i class="fa fa-sign-out"></i></button>
             </div>
         </div>
     </header>
@@ -113,17 +126,17 @@
                 <h2 class="text-2xl font-bold text-cleandark">Bem-vindo! 🚗✨</h2>
                 <p class="text-slate-500">Dados salvos na nuvem ☁️</p>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-accent">
+                    <div class="card bg-white rounded-xl shadow-sm p-5 border-l-4 border-accent">
                         <h3 class="font-semibold">Campanha Ativa</h3>
                         <p class="text-xl font-bold text-accent mt-1">OUTUBRO 15% OFF</p>
                     </div>
-                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-secondary">
+                    <div class="card bg-white rounded-xl shadow-sm p-5 border-l-4 border-secondary">
                         <h3 class="font-semibold">Link Agendamento</h3>
                         <button id="btnCopiarLink" class="text-sm text-secondary mt-2">
                             <i class="fa fa-copy"></i> Copiar
                         </button>
                     </div>
-                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-primary">
+                    <div class="card bg-white rounded-xl shadow-sm p-5 border-l-4 border-primary">
                         <h3 class="font-semibold">Hoje</h3>
                         <p id="diaSemana" class="font-bold text-primary mt-1"></p>
                     </div>
@@ -150,6 +163,7 @@
 https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
 
 #CleanCar #OutubroCleanCar #MogiDasCruzes #Vonixx</textarea>
+                    <button id="btnCopiarCampanha" class="mt-3 bg-primary text-white px-4 py-2 rounded-lg text-sm"><i class="fa fa-copy"></i> Copiar campanha</button>
                 </div>
             </section>
 
@@ -158,6 +172,7 @@ https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
                 <p class="text-slate-500 mt-2">Seu pedido fica salvo na nuvem ☁️</p>
                 <div class="bg-white rounded-xl shadow-sm p-5 mt-4">
                     <label class="block text-sm font-medium text-slate-700 mb-2">O que você precisa?</label>
+                    <div id="chips" class="flex flex-wrap gap-2 mb-3"></div>
                     <textarea id="userRequest" class="w-full h-32 bg-sky-50 p-4 rounded-lg border border-sky-200 focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm" placeholder="Ex: Postagem para story sobre Higienização VIP"></textarea>
                     <div class="flex flex-wrap gap-3 mt-4">
                         <button id="btnTexto" class="bg-primary text-white px-4 py-2 rounded-lg text-sm"><i class="fa fa-file-text"></i> Gerar Texto</button>
@@ -167,7 +182,11 @@ https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
                     <div id="resTexto" class="mt-4 hidden">
                         <h4 class="font-semibold mb-2">📝 Texto Gerado</h4>
                         <textarea id="textoGerado" class="w-full h-48 bg-sky-50 p-3 rounded-lg text-sm"></textarea>
-                        <button data-copy-from="textoGerado" class="copy-from mt-2 bg-primary text-white px-3 py-1 rounded text-sm">Copiar</button>
+                        <div class="flex flex-wrap items-center gap-2 mt-2">
+                            <button data-copy-from="textoGerado" class="copy-from bg-primary text-white px-3 py-1 rounded text-sm"><i class="fa fa-copy"></i> Copiar</button>
+                            <button id="btnWhats" type="button" class="bg-secondary text-white px-3 py-1 rounded text-sm"><i class="fa fa-whatsapp"></i> Enviar no WhatsApp</button>
+                            <span id="contador" class="text-xs text-slate-400 ml-auto"></span>
+                        </div>
                     </div>
                     <div id="resImagem" class="mt-4 hidden">
                         <h4 class="font-semibold mb-2">🖼️ Descrição de Imagem</h4>
@@ -193,13 +212,23 @@ https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
     </div>
 </div>
 
+<div id="toasts"></div>
+
 <script type="module">
 import CONFIG from './js/config.js';
 import { criarUsuario, logar, sair, salvarPedido, listarPedidos } from './js/supabase-db.js';
 import { getPostDoDia, POSTS_SEMANAIS, gerarTextoPersonalizado, gerarPromptImagem } from './js/content-generator.js';
 
+function toast(msg, tipo = 'ok') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + (tipo === 'erro' ? 'bg-accent' : 'bg-cleandark');
+  el.textContent = msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 2600);
+}
+
 function copiar(texto) {
-  navigator.clipboard.writeText(texto).then(() => alert('Copiado! ✅'));
+  navigator.clipboard.writeText(texto).then(() => toast('Copiado! ✅'), () => toast('Não consegui copiar', 'erro'));
 }
 
 function mostrarApp(nomeUsuario) {
@@ -216,6 +245,7 @@ function init() {
   const savedUser = localStorage.getItem('cleancar_user');
   if (savedId && savedUser) mostrarApp(savedUser);
   configurarEventos();
+  extras();
   document.getElementById('diaSemana').textContent = getPostDoDia().dia;
 }
 
@@ -235,16 +265,17 @@ function carregarPostDoDia() {
 function carregarListaPosts() {
   const container = document.getElementById('listaPosts');
   container.innerHTML = '';
-  POSTS_SEMANAIS.forEach((post) => {
+  POSTS_SEMANAIS.forEach((post, i) => {
+    const hoje = i === new Date().getDay();
     const texto = post.modelo(CONFIG.LINK_AGENDAMENTO);
     const div = document.createElement('div');
-    div.className = 'bg-white rounded-xl shadow-sm p-5';
+    div.className = 'card bg-white rounded-xl shadow-sm p-5' + (hoje ? ' ring-2 ring-primary' : '');
 
     const topo = document.createElement('div');
     topo.className = 'flex justify-between items-start mb-2';
     const h3 = document.createElement('h3');
     h3.className = 'font-semibold';
-    h3.textContent = `${post.icone} ${post.dia} — ${post.titulo}`;
+    h3.textContent = `${post.icone} ${post.dia} — ${post.titulo}` + (hoje ? '  • Hoje' : '');
     const btn = document.createElement('button');
     btn.className = 'text-slate-400 hover:text-primary';
     btn.innerHTML = '<i class="fa fa-copy"></i>';
@@ -286,7 +317,16 @@ async function renderizarPedidos() {
     conteudo.className = 'text-xs text-slate-500 mt-1';
     conteudo.textContent = p.conteudo;
 
-    div.append(linha, conteudo);
+    const usar = document.createElement('button');
+    usar.className = 'mt-2 text-xs text-primary hover:underline';
+    usar.innerHTML = '<i class="fa fa-repeat"></i> Reutilizar';
+    usar.addEventListener('click', () => {
+      document.querySelector('[data-tab="criar"]').click();
+      const ta = document.getElementById('userRequest');
+      ta.value = p.conteudo;
+      ta.focus();
+    });
+    div.append(linha, conteudo, usar);
     container.appendChild(div);
   });
 }
@@ -321,7 +361,7 @@ function configurarEventos() {
       return;
     }
 
-    alert('Conta criada! ✅ Faça login.');
+    toast('Conta criada! ✅ Faça login.');
     document.getElementById('registerForm').classList.add('hidden');
     document.getElementById('loginForm').classList.remove('hidden');
   });
@@ -371,32 +411,83 @@ function configurarEventos() {
 
   document.getElementById('btnTexto').addEventListener('click', async () => {
     const pedido = document.getElementById('userRequest').value.trim();
-    if (!pedido) return alert('Escreva o que precisa!');
-    document.getElementById('textoGerado').value = gerarTextoPersonalizado(pedido);
+    if (!pedido) return toast('Escreva o que precisa!', 'erro');
+    const tg = document.getElementById('textoGerado'); tg.value = gerarTextoPersonalizado(pedido); tg.dispatchEvent(new Event('input'));
     document.getElementById('resTexto').classList.remove('hidden');
     document.getElementById('resImagem').classList.add('hidden');
     await salvarPedido('Texto', pedido);
+    toast('Pedido salvo na nuvem ☁️');
     renderizarPedidos();
   });
 
   document.getElementById('btnFeed').addEventListener('click', async () => {
     const pedido = document.getElementById('userRequest').value.trim();
-    if (!pedido) return alert('Escreva o que precisa!');
+    if (!pedido) return toast('Escreva o que precisa!', 'erro');
     document.getElementById('descImagem').value = gerarPromptImagem(pedido, 'feed');
     document.getElementById('resImagem').classList.remove('hidden');
     document.getElementById('resTexto').classList.add('hidden');
     await salvarPedido('Imagem Feed', pedido);
+    toast('Pedido salvo na nuvem ☁️');
     renderizarPedidos();
   });
 
   document.getElementById('btnStory').addEventListener('click', async () => {
     const pedido = document.getElementById('userRequest').value.trim();
-    if (!pedido) return alert('Escreva o que precisa!');
+    if (!pedido) return toast('Escreva o que precisa!', 'erro');
     document.getElementById('descImagem').value = gerarPromptImagem(pedido, 'story');
     document.getElementById('resImagem').classList.remove('hidden');
     document.getElementById('resTexto').classList.add('hidden');
     await salvarPedido('Imagem Story', pedido);
+    toast('Pedido salvo na nuvem ☁️');
     renderizarPedidos();
+  });
+}
+
+function extras() {
+  // atalhos de pedido
+  const chips = document.getElementById('chips');
+  ['Lavagem Prata', 'Lavagem Ouro', 'Higienização VIP', 'Campanha de Outubro', 'Antes e depois'].forEach(t => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'px-3 py-1 rounded-full text-xs bg-sky-100 text-cleandark hover:bg-primary hover:text-white transition';
+    b.textContent = t;
+    b.addEventListener('click', () => {
+      const ta = document.getElementById('userRequest');
+      ta.value = 'Postagem sobre ' + t;
+      ta.focus();
+    });
+    chips.appendChild(b);
+  });
+
+  // contador (limite de legenda do Instagram) e envio pelo WhatsApp
+  const tg = document.getElementById('textoGerado');
+  tg.addEventListener('input', () => {
+    const c = document.getElementById('contador');
+    c.textContent = `${tg.value.length}/2200`;
+    c.className = 'text-xs ml-auto ' + (tg.value.length > 2200 ? 'text-red-500' : 'text-slate-400');
+  });
+  document.getElementById('btnWhats').addEventListener('click', () => {
+    window.open('https://wa.me/?text=' + encodeURIComponent(tg.value), '_blank', 'noopener');
+  });
+  document.getElementById('btnCopiarCampanha').addEventListener('click', () => copiar(document.querySelector('#campanha textarea').value));
+
+  // olhinho para mostrar/ocultar senha
+  document.querySelectorAll('input[type=password]').forEach(inp => {
+    const w = document.createElement('div');
+    w.className = 'relative';
+    inp.replaceWith(w);
+    w.appendChild(inp);
+    inp.classList.add('pr-12');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary';
+    b.innerHTML = '<i class="fa fa-eye"></i>';
+    b.addEventListener('click', () => {
+      const oculta = inp.type === 'password';
+      inp.type = oculta ? 'text' : 'password';
+      b.firstChild.className = oculta ? 'fa fa-eye-slash' : 'fa fa-eye';
+    });
+    w.appendChild(b);
   });
 }
 
