@@ -7,7 +7,8 @@ async function verificar() {
   const p = [];
   const hoje = new Date();
   const diasParaVirar = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate() - hoje.getDate();
-  p.push({ prio: 'Alta', titulo: 'Migrar o login para Supabase Auth com RLS', motivo: 'As senhas ainda ficam em texto puro na tabela users e o repositório é público.' });
+  if (localStorage.getItem('cleancar_id')) p.push({ prio: 'Alta', titulo: 'Entrar com e-mail (Supabase Auth) e ativar o RLS', motivo: 'Você ainda está no login antigo, com senha em texto puro na tabela users.' });
+  else p.push({ prio: 'Média', titulo: 'Fechar cadastros abertos e apagar a tabela users antiga', motivo: 'Depois do login novo, a tabela antiga não é mais necessária e guarda senhas em texto puro.' });
   p.push({ prio: diasParaVirar <= 7 ? 'Alta' : 'Média', titulo: 'Campanhas editáveis (trocar o mês sem mexer no código)', motivo: `A campanha "Outubro 15% OFF" está fixa no código. Faltam ${diasParaVirar} dia(s) para o mês virar.` });
   p.push({ prio: 'Média', titulo: 'QR code do agendamento nas artes e link com UTM', motivo: 'Permite imprimir no balcão e saber de onde vêm os agendamentos.' });
   try {
