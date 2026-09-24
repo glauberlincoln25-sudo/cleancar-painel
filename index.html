@@ -238,9 +238,11 @@ https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
 const SUPABASE_URL = 'https://qpuwfnbszvocfntudcdc.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwdXdmbmJzenZvY2ZudHVkY2RjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNjkwMTksImV4cCI6MjEwNTg0NTAxOX0.pWGOFmPng0JfBYmTbkIn0baiUKH6Qu_CyzPGRdsnPEA';
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const linkAgendamento = "https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva";
+// Cria cliente do Supabase — UMA VEZ SÓ ✅
+const { createClient } = supabase;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+const linkAgendamento = "https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva";
 let currentUserId = null;
 
 // ==============================================
@@ -248,37 +250,37 @@ let currentUserId = null;
 // ==============================================
 
 async function criarUsuario(username, password) {
-  const { data: existente } = await supabase.from('users').select('username').eq('username', username).single();
+  const { data: existente } = await supabaseClient.from('users').select('username').eq('username', username).single();
   if (existente) return { erro: 'Usuário já existe!' };
   
-  const { data, error } = await supabase.from('users').insert({ username, password }).select().single();
+  const { data, error } = await supabaseClient.from('users').insert({ username, password }).select().single();
   if (error) return { erro: 'Erro ao criar conta: ' + error.message };
   return { usuario: data };
 }
 
 async function logar(username, password) {
-  const { data, error } = await supabase.from('users').select('*').eq('username', username).single();
+  const { data, error } = await supabaseClient.from('users').select('*').eq('username', username).single();
   if (error || !data || data.password !== password) return { erro: 'Usuário ou senha incorretos' };
   return { usuario: data };
 }
 
 async function alterarSenha(userId, senhaAtual, novaSenha) {
-  const { data: user } = await supabase.from('users').select('password').eq('id', userId).single();
+  const { data: user } = await supabaseClient.from('users').select('password').eq('id', userId).single();
   if (!user || user.password !== senhaAtual) return { erro: 'Senha atual incorreta' };
   
-  const { error } = await supabase.from('users').update({ password: novaSenha }).eq('id', userId);
+  const { error } = await supabaseClient.from('users').update({ password: novaSenha }).eq('id', userId);
   if (error) return { erro: 'Erro ao alterar senha' };
   return { sucesso: true };
 }
 
 async function salvarPedido(tipo, conteudo) {
   if (!currentUserId) return;
-  await supabase.from('pedidos').insert({ user_id: currentUserId, tipo, conteudo });
+  await supabaseClient.from('pedidos').insert({ user_id: currentUserId, tipo, conteudo });
 }
 
 async function carregarPedidosUsuario() {
   if (!currentUserId) return [];
-  const { data } = await supabase.from('pedidos').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false });
+  const { data } = await supabaseClient.from('pedidos').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false });
   return data || [];
 }
 
