@@ -3,11 +3,14 @@ import CONFIG from './config.js';
 // O script UMD do supabase-js (carregado no index.html) expõe window.supabase.
 // Não podemos declarar outra constante chamada "supabase" aqui, senão dá erro de
 // "Cannot access 'supabase' before initialization".
-const db = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+// Se a biblioteca não carregar (internet, bloqueador), o painel abre e avisa em vez de quebrar tudo.
+const db = window.supabase?.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+const SEM_DB = { erro: 'Não consegui conectar ao banco. Verifique a internet ou bloqueadores e atualize a página.' };
 
 let usuarioAtual = null;
 
 export async function criarUsuario(username, senha) {
+  if (!db) return SEM_DB;
   const { data: existente } = await db
     .from('users')
     .select('username')
@@ -28,6 +31,7 @@ export async function criarUsuario(username, senha) {
 }
 
 export async function logar(username, senha) {
+  if (!db) return SEM_DB;
   const { data, error } = await db
     .from('users')
     .select('*')
@@ -52,13 +56,13 @@ export function sair() {
 
 export async function salvarPedido(tipo, conteudo) {
   const userId = usuarioAtual?.id || localStorage.getItem('cleancar_id');
-  if (!userId) return;
+  if (!userId || !db) return;
   await db.from('pedidos').insert({ user_id: userId, tipo, conteudo });
 }
 
 export async function listarPedidos() {
   const userId = localStorage.getItem('cleancar_id');
-  if (!userId) return [];
+  if (!userId || !db) return [];
   const { data } = await db
     .from('pedidos')
     .select('*')
