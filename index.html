@@ -14,24 +14,29 @@
                     colors: {
                         primary: '#0284C7',
                         secondary: '#22C55E',
-                        accent: '#EF4444',
+                        accent: '#E11D48',
                         cleandark: '#0369A1'
                     }
                 }
             }
         }
     </script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/logo.png">
 <style>
-  body{font-family:'Inter',system-ui,sans-serif}
-  .login-bg{background:radial-gradient(circle at 15% 20%,#38bdf8aa 0,transparent 45%),radial-gradient(circle at 85% 85%,#22c55e66 0,transparent 40%),linear-gradient(135deg,#0369a1,#0c4a6e)}
-  .app-header{background:linear-gradient(90deg,#0369a1,#0284c7)}
-  .card{transition:transform .2s,box-shadow .2s}
-  .card:hover{transform:translateY(-2px);box-shadow:0 12px 28px -12px rgba(3,105,161,.4)}
-  .tab-content:not(.hidden){animation:fadeUp .3s ease}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  body{font-family:'Nunito',system-ui,sans-serif;color:#0f2a3d;background:radial-gradient(circle at 90% 10%,#dbeefd 0,transparent 35%),#f0f9ff}
+  h1,h2,h3,h4,.tab-btn,button{font-family:'Baloo 2','Nunito',sans-serif}
+  h2{color:#075985}
+  .login-bg{background:radial-gradient(circle at 15% 20%,#38bdf8aa 0,transparent 45%),radial-gradient(circle at 85% 85%,#e11d4855 0,transparent 40%),linear-gradient(135deg,#0369a1,#0c4a6e)}
+  .app-header{background:#0369a1;margin-bottom:16px}
+  .app-header::after{content:'';position:absolute;left:0;right:0;bottom:-14px;height:14px;background:radial-gradient(circle at 14px 0,#0369a1 13px,transparent 14px) 0 0/28px 14px repeat-x}
+  button.bg-primary,button.bg-secondary,button.bg-accent{border-radius:999px!important;font-weight:700;box-shadow:0 3px 0 rgba(3,42,74,.28);transition:transform .08s,box-shadow .08s}
+  button.bg-primary:active,button.bg-secondary:active,button.bg-accent:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(3,42,74,.28)}
+  button.bg-secondary{background:#16a34a!important}
+  .tab-btn{font-weight:600;font-size:1rem}
+  :focus-visible{outline:3px solid #e11d4866;outline-offset:2px}
   #toasts{position:fixed;bottom:1.25rem;right:1.25rem;z-index:100;display:flex;flex-direction:column;gap:.5rem}
-  .toast{color:#fff;padding:.7rem 1rem;border-radius:.75rem;font-size:.875rem;box-shadow:0 10px 25px -8px rgba(0,0,0,.35);animation:fadeUp .25s ease}
+  .toast{color:#fff;padding:.7rem 1rem;border-radius:.75rem;font-size:.875rem;box-shadow:0 10px 25px -8px rgba(0,0,0,.35)}
   @media(max-width:1023px){nav{position:static!important}nav ul{display:flex;overflow-x:auto;gap:.5rem}nav ul li{flex:none}}
 </style>
 </head>
@@ -40,7 +45,7 @@
 <div id="loginScreen" class="login-bg fixed inset-0 flex items-center justify-center z-50 overflow-y-auto">
     <div class="bg-white/95 rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
         <div class="text-center mb-8">
-            <div class="text-5xl mb-2">🚗✨</div>
+            <img src="assets/logo.png" alt="Clean Car" class="w-32 h-32 mx-auto rounded-full shadow-lg mb-3">
             <h1 class="text-3xl font-bold text-cleandark">Clean Car</h1>
             <p class="text-slate-500 mt-2">Painel Oficial ☁️</p>
         </div>
@@ -92,8 +97,8 @@
     <header class="app-header shadow-md sticky top-0 z-40">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-2">
-                <span class="text-2xl">🚗✨</span>
-                <h1 class="text-xl font-bold text-white">Clean Car</h1>
+                <img src="assets/logo.png" alt="Clean Car" class="w-11 h-11 rounded-full ring-2 ring-white">
+                <div class="leading-tight"><h1 class="text-xl font-bold text-white">Clean Car</h1><p class="text-xs text-sky-100">Painel de Marketing</p></div>
             </div>
             <div class="flex items-center gap-3 text-sm">
                 <a href="https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva" target="_blank" rel="noopener" class="bg-white text-secondary px-3 py-1 rounded-full font-semibold shadow-sm">
@@ -118,6 +123,7 @@
                     <li><button data-tab="postagens" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-file-text w-5 text-center text-slate-500"></i> Postagens</button></li>
                     <li><button data-tab="pedidos" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-history w-5 text-center text-slate-500"></i> Meus Pedidos</button></li>
                     <li><button data-tab="chat" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-comments w-5 text-center text-slate-500"></i> Dola IA</button></li>
+                    <li><button data-tab="melhorias" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-magic w-5 text-center text-slate-500"></i> Melhorias</button></li>
                 </ul>
             </nav>
         </aside>
@@ -190,7 +196,9 @@ https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
                         </div>
                     </div>
                     <div id="resImagem" class="mt-4 hidden">
-                        <h4 class="font-semibold mb-2">🖼️ Descrição de Imagem</h4>
+                        <h4 class="font-semibold mb-2">🖼️ Arte pronta</h4>
+                        <div id="arteBox" class="mb-4"></div>
+                        <p class="text-sm text-slate-500 mb-1">Descrição para outros geradores de imagem:</p>
                         <textarea id="descImagem" class="w-full h-48 bg-sky-50 p-3 rounded-lg text-sm"></textarea>
                         <button data-copy-from="descImagem" class="copy-from mt-2 bg-primary text-white px-3 py-1 rounded text-sm">Copiar</button>
                     </div>
@@ -221,6 +229,12 @@ https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
                     </form>
                 </div>
             </section>
+            <section id="melhorias" class="tab-content hidden">
+                <h2 class="text-2xl font-bold text-cleandark">🛠️ Melhorias da Dola</h2>
+                <p class="text-slate-500">A Dola verifica o painel e propõe melhorias. Você autoriza e ela envia o pedido pronto para execução.</p>
+                <p id="infoVersao" class="text-xs text-slate-400 mt-1"></p>
+                <div id="listaMelhorias" class="space-y-3 mt-4"></div>
+            </section>
         </main>
     </div>
 </div>
@@ -243,6 +257,8 @@ import CONFIG from './js/config.js';
 import { criarUsuario, logar, sair, salvarPedido, listarPedidos } from './js/supabase-db.js';
 import { getPostDoDia, POSTS_SEMANAIS, gerarTextoPersonalizado, gerarPromptImagem } from './js/content-generator.js';
 import { iniciarDola } from './js/dola.js';
+import { iniciarMelhorias } from './js/melhorias.js';
+import { montarArte, achaServico } from './js/arte.js';
 
 function toast(msg, tipo = 'ok') {
   const el = document.createElement('div');
@@ -272,6 +288,7 @@ function init() {
   configurarEventos();
   extras();
   iniciarDola({ copiar, salvarPedido, toast });
+  iniciarMelhorias({ toast, copiar });
   document.getElementById('diaSemana').textContent = getPostDoDia().dia;
 }
 
@@ -450,6 +467,7 @@ function configurarEventos() {
     const pedido = document.getElementById('userRequest').value.trim();
     if (!pedido) return toast('Escreva o que precisa!', 'erro');
     document.getElementById('descImagem').value = gerarPromptImagem(pedido, 'feed');
+    montarArte(document.getElementById('arteBox'), { copiar, toast }, achaServico(pedido), 'feed');
     document.getElementById('resImagem').classList.remove('hidden');
     document.getElementById('resTexto').classList.add('hidden');
     await salvarPedido('Imagem Feed', pedido);
@@ -461,6 +479,7 @@ function configurarEventos() {
     const pedido = document.getElementById('userRequest').value.trim();
     if (!pedido) return toast('Escreva o que precisa!', 'erro');
     document.getElementById('descImagem').value = gerarPromptImagem(pedido, 'story');
+    montarArte(document.getElementById('arteBox'), { copiar, toast }, achaServico(pedido), 'story');
     document.getElementById('resImagem').classList.remove('hidden');
     document.getElementById('resTexto').classList.add('hidden');
     await salvarPedido('Imagem Story', pedido);

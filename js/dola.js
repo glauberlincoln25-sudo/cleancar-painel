@@ -1,9 +1,10 @@
 import CONFIG from './config.js';
 import { POSTS_SEMANAIS, getPostDoDia, gerarTextoPersonalizado, gerarPromptImagem } from './content-generator.js';
+import { montarArte, achaServico } from './arte.js';
 
 const LINK = CONFIG.LINK_AGENDAMENTO;
 const norm = (t) => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-const SUGESTOES = ['Postagem de hoje', 'Campanha de Outubro completa', 'Texto story Lavagem Ouro', 'Hashtags para Lavagem Prata', 'Descrição de imagem para o feed', 'Quais os preços?', 'Link de agendamento'];
+const SUGESTOES = ['Postagem de hoje', 'Campanha de Outubro completa', 'Texto story Lavagem Ouro', 'Hashtags para Lavagem Prata', 'Arte para story Lavagem Ouro', 'Arte para feed da Higienização VIP', 'Quais os preços?', 'Link de agendamento'];
 const AJUDA = 'Recebido! 💙 Pode me pedir:\n• Postagem de hoje (ou de um dia: "postagem de sexta")\n• Campanha completa\n• Texto de um serviço (Prata, Ouro ou VIP)\n• Hashtags\n• Descrição de imagem (feed ou story)\n• Preços e link de agendamento\n\nÉ só dizer o tema! 🚗✨';
 
 function servico(m) {
@@ -27,9 +28,12 @@ export function responder(msg) {
   if (m.includes('preco') || m.includes('valor') || m.includes('quanto')) {
     return { texto: '💰 Outubro — 15% OFF\n✅ Lavagem Prata: R$ 110,50 (de R$ 130)\n✅ Lavagem Ouro: R$ 153 (de R$ 180)\n✅ Higienização VIP: R$ 357 (de R$ 420)', copiavel: false };
   }
-  if (m.includes('imagem') || m.includes('foto') || m.includes('logo') || m.includes('arte')) {
-    const formato = m.includes('story') ? 'story' : 'feed';
+  const formato = m.includes('story') ? 'story' : 'feed';
+  if (m.includes('prompt') || m.includes('descri')) {
     return { texto: gerarPromptImagem(s || 'Campanha de Outubro, 15% OFF', formato), copiavel: true };
+  }
+  if (m.includes('imagem') || m.includes('foto') || m.includes('logo') || m.includes('arte')) {
+    return { texto: `Aqui está a arte ${formato === 'story' ? 'para story (9:16)' : 'para feed (1:1)'} 🎨 Baixe ou copie com um clique:`, copiavel: false, arte: { chave: achaServico(msg), formato } };
   }
   if (m.includes('hoje') || dia) {
     const p = dia || getPostDoDia();
@@ -84,7 +88,8 @@ export function iniciarDola({ copiar, salvarPedido, toast }) {
     setTimeout(() => {
       digitando.remove();
       const r = responder(msg);
-      addMsg(r.texto, false, r.copiavel);
+      const linha = addMsg(r.texto, false, r.copiavel);
+      if (r.arte) montarArte(linha.lastChild, { copiar, toast }, r.arte.chave, r.arte.formato);
       if (salvarPedido) salvarPedido('Dola', msg).catch(() => {});
     }, 500);
   }
