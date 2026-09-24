@@ -41,7 +41,6 @@
 </style>
 </head>
 <body class="bg-sky-50 font-sans min-h-screen">
-
 <div id="loginScreen" class="login-bg fixed inset-0 flex items-center justify-center z-50 overflow-y-auto">
     <div class="bg-white/95 rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
         <div class="text-center mb-8">
@@ -49,7 +48,6 @@
             <h1 class="text-3xl font-bold text-cleandark">Clean Car</h1>
             <p class="text-slate-500 mt-2">Painel Oficial ☁️</p>
         </div>
-
         <form id="loginForm" class="space-y-5">
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">E-mail</label>
@@ -67,7 +65,6 @@
                 Criar nova conta
             </button>
         </form>
-
         <form id="registerForm" class="space-y-5 hidden">
             <h3 class="text-lg font-semibold text-center text-cleandark">Criar Conta ☁️</h3>
             <div>
@@ -92,7 +89,6 @@
         </form>
     </div>
 </div>
-
 <div id="mainApp" class="hidden">
     <header class="app-header shadow-md sticky top-0 z-40">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -112,14 +108,13 @@
             </div>
         </div>
     </header>
-
     <div class="container mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
         <aside class="lg:w-64 shrink-0">
             <nav class="bg-white rounded-xl shadow-sm p-4 sticky top-20">
                 <ul class="space-y-2">
                     <li><button data-tab="dashboard" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/5 text-primary font-medium"><i class="fa fa-tachometer w-5 text-center"></i> Painel</button></li>
                     <li><button data-tab="campanha" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-bullhorn w-5 text-center text-slate-500"></i> Campanha</button></li>
-                    <li><button data-tab="criar" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-plus-circle w-5 text-center text-slate-500"></i> Criar Postagem</button></li>
+                    <li><button data-tab="criar" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/5 text-primary font-medium"><i class="fa fa-plus-circle w-5 text-center"></i> Criar Postagem</button></li>
                     <li><button data-tab="postagens" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-file-text w-5 text-center text-slate-500"></i> Postagens</button></li>
                     <li><button data-tab="pedidos" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-history w-5 text-center text-slate-500"></i> Meus Pedidos</button></li>
                     <li><button data-tab="calendario" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-calendar w-5 text-center text-slate-500"></i> Calendário</button></li>
@@ -128,11 +123,10 @@
                 </ul>
             </nav>
         </aside>
-
         <main class="flex-1 space-y-6">
             <section id="dashboard" class="tab-content">
                 <h2 class="text-2xl font-bold text-cleandark">Bem-vindo! 🚗✨</h2>
-                <p class="text-slate-500">Dados salvos na nuvem ☁️</p>
+                <p class="text-slate-500">Seu pedido fica salvo na nuvem ☁️</p>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                     <div class="card bg-white rounded-xl shadow-sm p-5 border-l-4 border-accent">
                         <h3 class="font-semibold">Campanha Ativa</h3>
@@ -158,31 +152,26 @@
                     <p id="lembreteHoje" class="text-sm mt-3"></p>
                 </div>
             </section>
-
             <section id="campanha" class="tab-content hidden">
                 <h2 class="text-2xl font-bold text-cleandark">🔥 Campanha Outubro — 15% OFF</h2>
                 <div class="bg-white rounded-xl shadow-sm p-5 mt-4">
                     <textarea class="w-full h-64 bg-sky-50 p-4 rounded-lg text-sm resize-none border-0" readonly>🚗✨ OUTUBRO CLEAN CAR — 15% DE DESCONTO! ✨🚗
-
 ✅ LAVAGEM PRATA → R$ 110,50 (de R$ 130)
 ✅ LAVAGEM OURO ⭐ → R$ 153 (de R$ 180)
 ✅ HIGIENIZAÇÃO VIP → R$ 357 (de R$ 420)
-
 👉 AGENDE:
 https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
-
 #CleanCar #OutubroCleanCar #MogiDasCruzes #Vonixx</textarea>
                     <button id="btnCopiarCampanha" class="mt-3 bg-primary text-white px-4 py-2 rounded-lg text-sm"><i class="fa fa-copy"></i> Copiar campanha</button>
                 </div>
             </section>
-
-            <section id="criar" class="tab-content hidden">
+            <section id="criar" class="tab-content">
                 <h2 class="text-2xl font-bold text-cleandark">✍️ Criar Postagem</h2>
-                <p class="text-slate-500 mt-2">Seu pedido fica salvo na nuvem ☁️</p>
+                <p class="text-slate-500 mt-2">Descreva o que você precisa e eu gero o texto e a arte para você!</p>
                 <div class="bg-white rounded-xl shadow-sm p-5 mt-4">
                     <label class="block text-sm font-medium text-slate-700 mb-2">O que você precisa?</label>
                     <div id="chips" class="flex flex-wrap gap-2 mb-3"></div>
-                    <textarea id="userRequest" class="w-full h-32 bg-sky-50 p-4 rounded-lg border border-sky-200 focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm" placeholder="Ex: Postagem para story sobre Higienização VIP"></textarea>
+                    <textarea id="userRequest" class="w-full h-32 bg-sky-50 p-4 rounded-lg border border-sky-200 focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm" placeholder="Ex: Crie uma arte para story sobre Higienização VIP, destaque o desconto e mostre um carro brilhante e limpo"></textarea>
                     <div class="flex flex-wrap gap-3 mt-4">
                         <button id="btnTexto" class="bg-primary text-white px-4 py-2 rounded-lg text-sm"><i class="fa fa-file-text"></i> Gerar Texto</button>
                         <button id="btnFeed" class="bg-accent text-white px-4 py-2 rounded-lg text-sm"><i class="fa fa-image"></i> Imagem Feed</button>
@@ -197,26 +186,34 @@ https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
                             <span id="contador" class="text-xs text-slate-400 ml-auto"></span>
                         </div>
                     </div>
-                    <div id="resImagem" class="mt-4 hidden">
-                        <h4 class="font-semibold mb-2">🖼️ Arte pronta</h4>
+                    <div id="resImagem" class="mt-6 hidden">
+                        <h4 class="font-semibold mb-2">🎨 Arte e Prompt prontos</h4>
                         <div id="arteBox" class="mb-4"></div>
-                        <p class="text-sm text-slate-500 mb-1">Descrição para outros geradores de imagem:</p>
+                        <p class="text-sm text-slate-500 mb-1">Descrição para geradores de imagem:</p>
                         <textarea id="descImagem" class="w-full h-48 bg-sky-50 p-3 rounded-lg text-sm"></textarea>
-                        <button data-copy-from="descImagem" class="copy-from mt-2 bg-primary text-white px-3 py-1 rounded text-sm">Copiar</button>
+                        <button data-copy-from="descImagem" class="copy-from mt-2 bg-primary text-white px-3 py-1 rounded text-sm"><i class="fa fa-copy"></i> Copiar Prompt</button>
                     </div>
                 </div>
             </section>
-
             <section id="postagens" class="tab-content hidden">
                 <h2 class="text-2xl font-bold text-cleandark">✍️ Postagens Semanais</h2>
                 <div id="listaPosts" class="space-y-4 mt-4"></div>
             </section>
-
             <section id="pedidos" class="tab-content hidden">
                 <h2 class="text-2xl font-bold text-cleandark">📋 Meus Pedidos</h2>
-                <p class="text-slate-500 mt-2">Salvos na nuvem — acessa de qualquer lugar!</p>
+                <p class="text-slate-500 mt-2">Salvos na nuvem — acesse de qualquer lugar!</p>
                 <div id="listaPedidos" class="space-y-3 mt-4">
                     <p class="text-slate-400 text-sm">Carregando...</p>
+                </div>
+            </section>
+            <section id="calendario" class="tab-content hidden">
+                <h2 class="text-2xl font-bold text-cleandark">📅 Calendário da Semana</h2>
+                <p id="resumoSemana" class="text-slate-500"></p>
+                <div id="gradeSemana" class="grid gap-3 mt-4 sm:grid-cols-2 xl:grid-cols-3"></div>
+                <div class="bg-white rounded-xl shadow-sm p-4 mt-6 flex flex-wrap items-center gap-3">
+                    <span class="font-semibold">⏰ Lembrete Diário</span>
+                    <input type="time" id="horaLembrete" value="10:00" class="px-3 py-2 rounded-lg border border-sky-200">
+                    <button id="btnLembrete" class="bg-primary text-white px-4 py-2 rounded-lg text-sm"><i class="fa fa-calendar-plus-o"></i> Criar no Google Agenda</button>
                 </div>
             </section>
             <section id="chat" class="tab-content hidden">
@@ -231,36 +228,23 @@ https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
                     </form>
                 </div>
             </section>
-            <section id="calendario" class="tab-content hidden">
-                <h2 class="text-2xl font-bold text-cleandark">📅 Calendário da semana</h2>
-                <p id="resumoSemana" class="text-slate-500"></p>
-                <div id="gradeSemana" class="grid gap-3 mt-4 sm:grid-cols-2 xl:grid-cols-3"></div>
-                <div class="bg-white rounded-xl shadow-sm p-4 mt-6 flex flex-wrap items-center gap-3">
-                    <span class="font-semibold">⏰ Lembrete diário</span>
-                    <input type="time" id="horaLembrete" value="10:00" class="px-3 py-2 rounded-lg border border-sky-200">
-                    <button id="btnLembrete" class="bg-primary text-white px-4 py-2 rounded-lg text-sm"><i class="fa fa-calendar-plus-o"></i> Criar no Google Agenda</button>
-                </div>
-            </section>
-
             <section id="melhorias" class="tab-content hidden">
-                <h2 class="text-2xl font-bold text-cleandark">🛠️ Melhorias da Dola</h2>
-                <p class="text-slate-500">A Dola verifica o painel e propõe melhorias. Ao autorizar, o pedido entra na fila do GitHub (Issues) e o texto é copiado. Depois, é só pedir no chat: “executar melhorias autorizadas”.</p>
-                <p id="infoVersao" class="text-xs text-slate-400 mt-1"></p>
+                <h2 class="text-2xl font-bold text-cleandark">🛠️ Melhorias</h2>
+                <p class="text-slate-500">Acompanhe atualizações e ajustes do painel.</p>
+                <p id="infoVersao" class="text-xs text-slate-400 mt-1">Versão atual: 24/09/2026</p>
                 <div id="listaMelhorias" class="space-y-3 mt-4"></div>
             </section>
         </main>
     </div>
 </div>
-
 <div id="toasts"></div>
-
 <script>
 function erroJS(msg) {
   if (document.getElementById('erroJS')) return;
   var d = document.createElement('div');
   d.id = 'erroJS';
   d.className = 'fixed top-0 inset-x-0 z-[200] bg-red-600 text-white text-sm p-3 text-center';
-  d.textContent = msg || 'Não consegui carregar os scripts da pasta js/. Abra o painel pelo endereço do site (não pelo arquivo no computador) e atualize com Ctrl+Shift+R.';
+  d.textContent = msg || 'Não consegui carregar os scripts. Atualize a página com Ctrl+Shift+R.';
   document.body.appendChild(d);
 }
 window.addEventListener('error', function (e) { erroJS('Erro no painel: ' + e.message); });
@@ -279,7 +263,7 @@ function toast(msg, tipo = 'ok') {
   el.className = 'toast ' + (tipo === 'erro' ? 'bg-accent' : 'bg-cleandark');
   el.textContent = msg;
   document.getElementById('toasts').appendChild(el);
-  setTimeout(() => el.remove(), 2600);
+  setTimeout(() => el.remove(), 3000);
 }
 
 function copiar(texto) {
@@ -298,52 +282,51 @@ function mostrarApp(nomeUsuario) {
 
 async function init() {
   configurarEventos();
-  extras();
+  configurarExtras();
   iniciarDola({ copiar, salvarPedido, toast });
   iniciarMelhorias({ toast, copiar });
   iniciarCalendario({ copiar, toast });
-  document.getElementById('diaSemana').textContent = getPostDoDia().dia;
-  const u = await sessaoAtual();
-  if (u) mostrarApp(u.username);
+  const dias = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  document.getElementById('diaSemana').textContent = dias[new Date().getDay()];
+  const usuario = await sessaoAtual();
+  if (usuario) mostrarApp(usuario.username);
 }
 
 function carregarPostDoDia() {
   const post = getPostDoDia();
-  const box = document.getElementById('todayPost');
-  box.innerHTML = '';
+  const caixa = document.getElementById('todayPost');
+  caixa.innerHTML = '';
   const titulo = document.createElement('h4');
   titulo.className = 'font-semibold text-primary mb-2';
   titulo.textContent = `${post.icone} ${post.dia} — ${post.titulo}`;
   const pre = document.createElement('pre');
   pre.className = 'whitespace-pre-wrap text-sm';
   pre.textContent = post.modelo(CONFIG.LINK_AGENDAMENTO);
-  box.append(titulo, pre);
+  caixa.append(titulo, pre);
 }
 
 function carregarListaPosts() {
   const container = document.getElementById('listaPosts');
   container.innerHTML = '';
-  POSTS_SEMANAIS.forEach((post, i) => {
-    const hoje = i === new Date().getDay();
+  const hoje = new Date().getDay();
+  POSTS_SEMANAIS.forEach((post, indice) => {
+    const ehHoje = indice === hoje;
     const texto = post.modelo(CONFIG.LINK_AGENDAMENTO);
     const div = document.createElement('div');
-    div.className = 'card bg-white rounded-xl shadow-sm p-5' + (hoje ? ' ring-2 ring-primary' : '');
-
+    div.className = `bg-white rounded-xl shadow-sm p-5 ${ehHoje ? 'ring-2 ring-primary' : ''}`;
     const topo = document.createElement('div');
     topo.className = 'flex justify-between items-start mb-2';
     const h3 = document.createElement('h3');
     h3.className = 'font-semibold';
-    h3.textContent = `${post.icone} ${post.dia} — ${post.titulo}` + (hoje ? '  • Hoje' : '');
-    const btn = document.createElement('button');
-    btn.className = 'text-slate-400 hover:text-primary';
-    btn.innerHTML = '<i class="fa fa-copy"></i>';
-    btn.addEventListener('click', () => copiar(texto));
-    topo.append(h3, btn);
-
+    h3.textContent = `${post.icone} ${post.dia} — ${post.titulo}${ehHoje ? ' • Hoje' : ''}`;
+    const btnCopiar = document.createElement('button');
+    btnCopiar.className = 'text-slate-400 hover:text-primary';
+    btnCopiar.innerHTML = '<i class="fa fa-copy"></i>';
+    btnCopiar.addEventListener('click', () => copiar(texto));
+    topo.append(h3, btnCopiar);
     const pre = document.createElement('pre');
     pre.className = 'bg-sky-50 p-3 rounded-lg text-sm whitespace-pre-wrap';
     pre.textContent = texto;
-
     div.append(topo, pre);
     container.appendChild(div);
   });
@@ -353,38 +336,33 @@ async function renderizarPedidos() {
   const container = document.getElementById('listaPedidos');
   const pedidos = await listarPedidos();
   if (!pedidos.length) {
-    container.innerHTML = '<p class="text-slate-400 text-sm">Nenhum pedido ainda. Comece criando uma postagem!</p>';
+    container.innerHTML = '<p class="text-slate-400 text-sm">Nenhum pedido ainda. Crie sua primeira postagem acima!</p>';
     return;
   }
   container.innerHTML = '';
-  pedidos.forEach(p => {
+  pedidos.forEach(pedido => {
     const div = document.createElement('div');
     div.className = 'bg-sky-50 p-3 rounded-lg border border-sky-100';
-
     const linha = document.createElement('div');
-    linha.className = 'flex justify-between';
+    linha.className = 'flex justify-between items-center';
     const tipo = document.createElement('span');
     tipo.className = 'font-medium text-sm';
-    tipo.textContent = p.tipo;
+    tipo.textContent = pedido.tipo;
     const data = document.createElement('span');
     data.className = 'text-xs text-slate-400';
-    data.textContent = new Date(p.created_at).toLocaleDateString('pt-BR');
+    data.textContent = new Date(pedido.criado_em).toLocaleDateString('pt-BR');
     linha.append(tipo, data);
-
-    const conteudo = document.createElement('p');
-    conteudo.className = 'text-xs text-slate-500 mt-1';
-    conteudo.textContent = p.conteudo;
-
-    const usar = document.createElement('button');
-    usar.className = 'mt-2 text-xs text-primary hover:underline';
-    usar.innerHTML = '<i class="fa fa-repeat"></i> Reutilizar';
-    usar.addEventListener('click', () => {
+    const texto = document.createElement('p');
+    texto.className = 'text-xs text-slate-600 mt-1';
+    texto.textContent = pedido.entrada;
+    const reutilizar = document.createElement('button');
+    reutilizar.className = 'mt-2 text-xs text-primary hover:underline';
+    reutilizar.textContent = '↻ Reutilizar';
+    reutilizar.addEventListener('click', () => {
       document.querySelector('[data-tab="criar"]').click();
-      const ta = document.getElementById('userRequest');
-      ta.value = p.conteudo;
-      ta.focus();
+      document.getElementById('userRequest').value = pedido.entrada;
     });
-    div.append(linha, conteudo, usar);
+    div.append(linha, texto, reutilizar);
     container.appendChild(div);
   });
 }
@@ -398,103 +376,92 @@ function configurarEventos() {
     document.getElementById('registerForm').classList.add('hidden');
     document.getElementById('loginForm').classList.remove('hidden');
   });
-
   document.getElementById('registerForm').addEventListener('submit', async e => {
     e.preventDefault();
-    const user = document.getElementById('newUsername').value.trim();
-    const pass = document.getElementById('newPassword').value;
-    const confirm = document.getElementById('confirmPassword').value;
-    const erroDiv = document.getElementById('registerError');
-
-    if (pass !== confirm) {
-      erroDiv.textContent = 'As senhas não coincidem!';
-      erroDiv.classList.remove('hidden');
+    const email = document.getElementById('newUsername').value.trim();
+    const senha = document.getElementById('newPassword').value;
+    const confirma = document.getElementById('confirmPassword').value;
+    const erro = document.getElementById('registerError');
+    if (senha !== confirma) {
+      erro.textContent = 'As senhas não coincidem!';
+      erro.classList.remove('hidden');
       return;
     }
-
-    const res = await criarUsuario(user, pass);
+    const res = await criarUsuario(email, senha);
     if (res.erro) {
-      erroDiv.textContent = res.erro;
-      erroDiv.classList.remove('hidden');
+      erro.textContent = res.erro;
+      erro.classList.remove('hidden');
       return;
     }
-
-    toast('Conta criada! ✅ Se pedir confirmação, veja seu e-mail. Depois faça login.');
+    toast('Conta criada! ✅ Faça login.');
     document.getElementById('registerForm').classList.add('hidden');
     document.getElementById('loginForm').classList.remove('hidden');
   });
-
   document.getElementById('loginForm').addEventListener('submit', async e => {
     e.preventDefault();
-    const user = document.getElementById('username').value.trim();
-    const pass = document.getElementById('password').value;
-
-    const res = await logar(user, pass);
+    const usuario = document.getElementById('username').value.trim();
+    const senha = document.getElementById('password').value;
+    const res = await logar(usuario, senha);
     if (res.erro) {
       document.getElementById('loginError').textContent = res.erro;
       document.getElementById('loginError').classList.remove('hidden');
       return;
     }
-
-    document.getElementById('loginError').classList.add('hidden');
     mostrarApp(res.usuario.username);
   });
-
   document.getElementById('logoutBtn').addEventListener('click', () => {
     sair();
     document.getElementById('mainApp').classList.add('hidden');
     document.getElementById('loginScreen').classList.remove('hidden');
   });
-
   document.getElementById('btnCopiarLink').addEventListener('click', () => copiar(CONFIG.LINK_AGENDAMENTO));
   document.getElementById('btnCopiarHoje').addEventListener('click', () => copiar(getPostDoDia().modelo(CONFIG.LINK_AGENDAMENTO)));
+  document.getElementById('btnCopiarCampanha').addEventListener('click', () => copiar(document.querySelector('#campanha textarea').value));
   document.querySelectorAll('.copy-from').forEach(btn => {
     btn.addEventListener('click', () => copiar(document.getElementById(btn.dataset.copyFrom).value));
   });
-
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const aba = btn.getAttribute('data-tab');
+  document.querySelectorAll('.tab-btn').forEach(botao => {
+    botao.addEventListener('click', () => {
+      const aba = botao.dataset.tab;
       document.querySelectorAll('.tab-btn').forEach(b => {
         b.classList.remove('bg-primary/5','text-primary','font-medium');
         b.classList.add('hover:bg-sky-50');
       });
-      btn.classList.add('bg-primary/5','text-primary','font-medium');
-      btn.classList.remove('hover:bg-sky-50');
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+      botao.classList.add('bg-primary/5','text-primary','font-medium');
+      botao.classList.remove('hover:bg-sky-50');
+      document.querySelectorAll('.tab-content').forEach(caixa => caixa.classList.add('hidden'));
       document.getElementById(aba).classList.remove('hidden');
       if (aba === 'pedidos') renderizarPedidos();
     });
   });
-
   document.getElementById('btnTexto').addEventListener('click', async () => {
     const pedido = document.getElementById('userRequest').value.trim();
     if (!pedido) return toast('Escreva o que precisa!', 'erro');
-    const tg = document.getElementById('textoGerado'); tg.value = gerarTextoPersonalizado(pedido); tg.dispatchEvent(new Event('input'));
+    const caixaTexto = document.getElementById('textoGerado');
+    caixaTexto.value = gerarTextoPersonalizado(pedido);
+    caixaTexto.dispatchEvent(new Event('input'));
     document.getElementById('resTexto').classList.remove('hidden');
     document.getElementById('resImagem').classList.add('hidden');
     await salvarPedido('Texto', pedido);
     toast('Pedido salvo na nuvem ☁️');
     renderizarPedidos();
   });
-
   document.getElementById('btnFeed').addEventListener('click', async () => {
     const pedido = document.getElementById('userRequest').value.trim();
     if (!pedido) return toast('Escreva o que precisa!', 'erro');
     document.getElementById('descImagem').value = gerarPromptImagem(pedido, 'feed');
-    montarArte(document.getElementById('arteBox'), { copiar, toast }, achaServico(pedido), 'feed');
+    montarArte(document.getElementById('arteBox'), { copiar, toast }, achaServico(pedido), 'feed', pedido);
     document.getElementById('resImagem').classList.remove('hidden');
     document.getElementById('resTexto').classList.add('hidden');
     await salvarPedido('Imagem Feed', pedido);
     toast('Pedido salvo na nuvem ☁️');
     renderizarPedidos();
   });
-
   document.getElementById('btnStory').addEventListener('click', async () => {
     const pedido = document.getElementById('userRequest').value.trim();
     if (!pedido) return toast('Escreva o que precisa!', 'erro');
     document.getElementById('descImagem').value = gerarPromptImagem(pedido, 'story');
-    montarArte(document.getElementById('arteBox'), { copiar, toast }, achaServico(pedido), 'story');
+    montarArte(document.getElementById('arteBox'), { copiar, toast }, achaServico(pedido), 'story', pedido);
     document.getElementById('resImagem').classList.remove('hidden');
     document.getElementById('resTexto').classList.add('hidden');
     await salvarPedido('Imagem Story', pedido);
@@ -503,56 +470,49 @@ function configurarEventos() {
   });
 }
 
-function extras() {
-  // atalhos de pedido
-  const chips = document.getElementById('chips');
-  ['Lavagem Prata', 'Lavagem Ouro', 'Higienização VIP', 'Campanha de Outubro', 'Antes e depois'].forEach(t => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'px-3 py-1 rounded-full text-xs bg-sky-100 text-cleandark hover:bg-primary hover:text-white transition';
-    b.textContent = t;
-    b.addEventListener('click', () => {
-      const ta = document.getElementById('userRequest');
-      ta.value = 'Postagem sobre ' + t;
-      ta.focus();
+function configurarExtras() {
+  const caixaBotoes = document.getElementById('chips');
+  ['Lavagem Prata', 'Lavagem Ouro', 'Higienização VIP', 'Campanha de Outubro', 'Antes e Depois'].forEach(texto => {
+    const botao = document.createElement('button');
+    botao.type = 'button';
+    botao.className = 'px-3 py-1 rounded-full text-xs bg-sky-100 text-cleandark hover:bg-primary hover:text-white transition';
+    botao.textContent = texto;
+    botao.addEventListener('click', () => {
+      const campo = document.getElementById('userRequest');
+      campo.value = 'Postagem sobre ' + texto;
+      campo.focus();
     });
-    chips.appendChild(b);
+    caixaBotoes.appendChild(botao);
   });
-
-  // contador (limite de legenda do Instagram) e envio pelo WhatsApp
-  const tg = document.getElementById('textoGerado');
-  tg.addEventListener('input', () => {
-    const c = document.getElementById('contador');
-    c.textContent = `${tg.value.length}/2200`;
-    c.className = 'text-xs ml-auto ' + (tg.value.length > 2200 ? 'text-red-500' : 'text-slate-400');
+  const campoTexto = document.getElementById('textoGerado');
+  campoTexto.addEventListener('input', () => {
+    const contador = document.getElementById('contador');
+    contador.textContent = `${campoTexto.value.length}/2200 caracteres`;
+    contador.className = 'text-xs ml-auto ' + (campoTexto.value.length > 2200 ? 'text-red-500' : 'text-slate-400');
   });
   document.getElementById('btnWhats').addEventListener('click', () => {
-    window.open('https://wa.me/?text=' + encodeURIComponent(tg.value), '_blank', 'noopener');
+    window.open('https://wa.me/?text=' + encodeURIComponent(campoTexto.value), '_blank', 'noopener');
   });
-  document.getElementById('btnCopiarCampanha').addEventListener('click', () => copiar(document.querySelector('#campanha textarea').value));
-
-  // olhinho para mostrar/ocultar senha
-  document.querySelectorAll('input[type=password]').forEach(inp => {
-    const w = document.createElement('div');
-    w.className = 'relative';
-    inp.replaceWith(w);
-    w.appendChild(inp);
-    inp.classList.add('pr-12');
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary';
-    b.innerHTML = '<i class="fa fa-eye"></i>';
-    b.addEventListener('click', () => {
-      const oculta = inp.type === 'password';
-      inp.type = oculta ? 'text' : 'password';
-      b.firstChild.className = oculta ? 'fa fa-eye-slash' : 'fa fa-eye';
+  document.querySelectorAll('input[type="password"]').forEach(input => {
+    const pai = document.createElement('div');
+    pai.className = 'relative';
+    input.replaceWith(pai);
+    pai.appendChild(input);
+    input.classList.add('pr-12');
+    const olho = document.createElement('button');
+    olho.type = 'button';
+    olho.className = 'absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary';
+    olho.innerHTML = '<i class="fa fa-eye"></i>';
+    olho.addEventListener('click', () => {
+      const mostra = input.type === 'password';
+      input.type = mostra ? 'text' : 'password';
+      olho.firstChild.className = mostra ? 'fa fa-eye-slash' : 'fa fa-eye';
     });
-    w.appendChild(b);
+    pai.appendChild(olho);
   });
 }
 
 window.addEventListener('DOMContentLoaded', init);
 </script>
-
 </body>
 </html>
