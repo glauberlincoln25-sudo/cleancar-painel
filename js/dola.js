@@ -1,28 +1,38 @@
 import CONFIG from './config.js';
 
-// ==============================================
-// 📋 BASE DE CONHECIMENTO — Clean Car
-// ==============================================
-const DADOS = {
-  servicos: {
-    bronze: { nome: 'Lavagem Bronze', valor: 'R$ 85', desc: 'Manutenção rápida, cuidado completo' },
-    prata: { nome: 'Lavagem Prata', valor: 'R$ 130', desc: 'Estética completa para seu carro' },
-    ouro: { nome: 'Lavagem Ouro', valor: 'R$ 180', desc: 'Pré-lavagem + Vonixx + higienização' },
-    vip: { nome: 'Higienização Interna VIP', valor: 'R$ 420', desc: 'Saúde e conforto para toda a família' },
-    ducha: { nome: 'Ducha', valor: 'R$ 40', desc: 'Rápida, mantém o brilho' },
-    farol: { nome: 'Restauração de Farol', valor: 'R$ 299', desc: 'Transparência + segurança à noite' },
-    vitrificacao: { nome: 'Vitrificação', valor: 'R$ 500', desc: 'Proteção de até 3 anos' },
-    polimento: { nome: 'Polimento Técnico', valor: 'R$ 800', desc: 'Correção de riscos + brilho espelhado' }
-  },
-  linkAgendamento: CONFIG.LINK_AGENDAMENTO,
-  local: 'Mogi das Cruzes — atende Alto Tietê',
-  produtos: 'Vonixx',
-  instagram: '@cleancar_est26'
-};
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
-// ==============================================
-// 🔧 Funções auxiliares
-// ==============================================
+// 📋 DADOS OFICIAIS
+const DADOS_BASE = `
+VOCÊ É A DOLA, ASSISTENTE DA CLEAN CAR — ESTÉTICA AUTOMOTIVA.
+Seja amigável, direta, prática.
+
+📋 SERVIÇOS E VALORES BASE:
+• Lavagem Bronze → R$ 85 — Manutenção rápida
+• Lavagem Prata → R$ 130 — Estética completa
+• Lavagem Ouro → R$ 180 — Pré-lavagem + Vonixx + higienização
+• Higienização Interna VIP → R$ 420 — Saúde e conforto para a família
+• Ducha → R$ 40 — Rápida, mantém o brilho
+• Restauração de Farol → R$ 299 — Transparência + segurança
+• Vitrificação → R$ 500 — Proteção de até 3 anos
+• Polimento Técnico → R$ 800 — Correção de riscos + brilho espelhado
+
+📍 Local: Mogi das Cruzes — atende Alto Tietê
+🧪 Produtos: Vonixx
+📅 Agendamento: ${CONFIG.LINK_AGENDAMENTO}
+📸 Instagram: @cleancar_est26
+
+📝 REGRAS:
+1. Calcule desconto sobre o valor base quando mencionado
+2. Sempre que possível inclua o link de agendamento
+3. Formate para copiar e colar no Instagram
+4. Tom: amigável, profissional, emojis com moderação
+5. Responda em português do Brasil
+6. Se o usuário escrever texto livre, use-o como legenda e inclua o link
+`;
+
+let GEMINI_API_KEY = localStorage.getItem('gemini_api_key') || '';
+
 function calcularDesconto(valor, porcentagem) {
   if (!porcentagem) return valor;
   const num = parseFloat(valor.replace(',', '.'));
@@ -37,153 +47,142 @@ function extrairDesconto(texto) {
 
 function identificarServico(texto) {
   const m = texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  if (m.includes('bronze')) return 'bronze';
-  if (m.includes('prata')) return 'prata';
-  if (m.includes('ouro')) return 'ouro';
-  if ((m.includes('higieniz') || m.includes('vip') || m.includes('interna')) && !m.includes('banco')) return 'vip';
-  if (m.includes('ducha')) return 'ducha';
-  if (m.includes('farol')) return 'farol';
-  if (m.includes('vitrific')) return 'vitrificacao';
-  if (m.includes('polimento')) return 'polimento';
+  if (m.includes('bronze')) return {nome:'Lavagem Bronze', valor:'R$ 85'};
+  if (m.includes('prata')) return {nome:'Lavagem Prata', valor:'R$ 130'};
+  if (m.includes('ouro')) return {nome:'Lavagem Ouro', valor:'R$ 180'};
+  if ((m.includes('higieniz')||m.includes('vip')||m.includes('interna')) && !m.includes('banco')) return {nome:'Higienização Interna VIP', valor:'R$ 420'};
+  if (m.includes('ducha')) return {nome:'Ducha', valor:'R$ 40'};
+  if (m.includes('farol')) return {nome:'Restauração de Farol', valor:'R$ 299'};
+  if (m.includes('vitrific')) return {nome:'Vitrificação', valor:'R$ 500'};
+  if (m.includes('polimento')) return {nome:'Polimento Técnico', valor:'R$ 800'};
   return null;
 }
 
-// ==============================================
-// ✍️ GERADOR DE RESPOSTAS — Inteligente sem chave
-// ==============================================
-function gerarResposta(textoUsuario) {
+function respostaLocal(textoUsuario) {
+  const servico = identificarServico(textoUsuario);
   const desconto = extrairDesconto(textoUsuario);
-  const servicoChave = identificarServico(textoUsuario);
+  
+  if (servico && desconto) {
+    const valorFinal = calcularDesconto(servico.valor, desconto);
+    return `🔥 PROMOÇÃO — ${desconto}% DE DESCONTO! 🔥
 
-  // Se tem serviço + desconto → gera campanha pronta
-  if (servicoChave && desconto) {
-    const s = DADOS.servicos[servicoChave];
-    const valorComDesconto = calcularDesconto(s.valor, desconto);
-    
-    return `🔥 PROMOÇÃO EXCLUSIVA — ${desconto}% DE DESCONTO! 🔥
+${servico.nome}
 
-${s.nome}
+De ${servico.valor} → por ${valorFinal} ✅
 
-${s.desc}
+Produtos Vonixx • Mogi das Cruzes
 
-DE ${s.valor}
-→ POR ${valorComDesconto}
-✅ ${desconto}% DE ECONOMIA!
-
-✅ Produtos ${DADOS.produtos}
-✅ Atendimento profissional
-✅ ${DADOS.local}
-
-👉 Agende agora:
-${DADOS.linkAgendamento}
+👉 Agende: ${CONFIG.LINK_AGENDAMENTO}
 
 #CleanCar #Promoção #EsteticaAutomotiva #MogiDasCruzes`;
   }
+  
+  if (servico) {
+    return `${servico.nome}
 
-  // Se tem serviço sem desconto
-  if (servicoChave) {
-    const s = DADOS.servicos[servicoChave];
-    return `${s.nome}
+Valor: ${servico.valor}
 
-${s.desc}
+👉 Agende: ${CONFIG.LINK_AGENDAMENTO}
 
-A partir de ${s.valor}
-
-👉 Agende: ${DADOS.linkAgendamento}
-
-Produtos ${DADOS.produtos} • ${DADOS.local}
 #CleanCar #EsteticaAutomotiva #MogiDasCruzes`;
   }
-
-  // Perguntas específicas
+  
   const t = textoUsuario.toLowerCase();
   if (t.includes('agendar') || t.includes('marcar')) {
     return `📅 É fácil agendar!
 
-Acesse o link abaixo e escolha serviço, dia e horário:
+🔗 ${CONFIG.LINK_AGENDAMENTO}
 
-🔗 ${DADOS.linkAgendamento}
-
-Estúdio em ${DADOS.local} 💙🚗✨`;
+Escolha serviço, dia e horário 💙🚗✨`;
   }
-
-  if (t.includes('todos') || t.includes('lista') && t.includes('serviço')) {
-    return `📋 TABELA DE SERVIÇOS — Clean Car
-
-✅ Lavagem Bronze → R$ 85
-✅ Lavagem Prata → R$ 130
-✅ Lavagem Ouro → R$ 180
-✅ Higienização VIP → R$ 420
-✅ Ducha → R$ 40
-✅ Restauração de Farol → R$ 299
-✅ Vitrificação → R$ 500
-✅ Polimento Técnico → R$ 800
-
-👉 Agende: ${DADOS.linkAgendamento}
-
-Aplique desconto sobre o valor base conforme sua campanha! 💙`;
-  }
-
-  if (t.includes('desconto') && t.includes('todos')) {
-    return `💰 DESCONTO EM TODOS OS SERVIÇOS
-
-Aplique sobre os valores:
-
-• Lavagem Bronze → R$ 85
-• Lavagem Prata → R$ 130
-• Lavagem Ouro → R$ 180
-• Higienização VIP → R$ 420
-• Ducha → R$ 40
-• Restauração de Farol → R$ 299
-• Vitrificação → R$ 500
-• Polimento Técnico → R$ 800
-
-Exemplo: 15% de desconto em Lavagem Prata → R$ 110,50
-
-👉 Agende: ${DADOS.linkAgendamento}
-
-#CleanCar #Promoção #Desconto`;
-  }
-
-  // Texto livre do usuário → ele é o guia
+  
   if (textoUsuario.length > 15) {
     return `${textoUsuario}
 
-👉 Agende: ${DADOS.linkAgendamento}
+👉 Agende: ${CONFIG.LINK_AGENDAMENTO}
 
-Produtos ${DADOS.produtos} • ${DADOS.local}
-#CleanCar #EsteticaAutomotiva #MogiDasCruzes`;
+#CleanCar #MogiDasCruzes`;
   }
+  
+  return `Pode me pedir assim:
+"Lavagem Prata com 15% de desconto"
+"Lista de serviços"
+"Como agendar?"
 
-  // Resposta padrão
-  return `Recebido! 💙 Vou te ajudar com isso.
-
-Você pode pedir:
-• "Postagem Lavagem Prata com 10% de desconto"
-• "Lista de todos os serviços"
-• "Como agendar?"
-• Ou escrever seu texto que eu formato prontinho!
-
-O que precisa? 🚗✨`;
+O que precisa? 💙`;
 }
 
-// ==============================================
-// 🚀 INICIALIZAÇÃO
-// ==============================================
+async function chamarGemini(mensagem, historico) {
+  if (!GEMINI_API_KEY) return null;
+  
+  try {
+    const resposta = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        contents: [
+          {role:'user', parts:[{text:DADOS_BASE}]},
+          {role:'model', parts:[{text:'Pronto! 💙'}]},
+          ...historico.map(h => ({role:h.usuario?'user':'model', parts:[{text:h.texto}]})),
+          {role:'user', parts:[{text:mensagem}]}
+        ],
+        generationConfig: {temperature:0.7, maxOutputTokens:1024}
+      })
+    });
+    
+    const dados = await resposta.json();
+    if (dados?.error) {
+      console.warn('Erro Gemini:', dados.error);
+      return null;
+    }
+    return dados?.candidates?.[0]?.content?.parts?.[0]?.text;
+  } catch (erro) {
+    console.warn('Falha Gemini:', erro);
+    return null;
+  }
+}
+
 export function iniciarDola({ copiar, salvarPedido, toast }) {
   const caixaMensagens = document.getElementById('chatMessages');
   const form = document.getElementById('chatForm');
   const input = document.getElementById('chatInput');
+  let historico = [];
 
-  // Chips rápidos
+  // 🔑 CAMPO DA CHAVE — SEGURO, SÓ NO SEU NAVEGADOR
+  const areaConfig = document.createElement('div');
+  areaConfig.className = 'px-4 pt-3 pb-1 border-b border-sky-100';
+  areaConfig.innerHTML = `
+    <details class="text-sm">
+      <summary class="cursor-pointer text-slate-500 hover:text-primary">
+        🔑 Configurar Chave Gemini ${GEMINI_API_KEY ? '(✅ Ativada)' : '(⚠️ Não configurada)'}
+      </summary>
+      <div class="mt-2 flex gap-2">
+        <input type="password" id="campoChave" placeholder="Cole sua chave aqui" 
+          class="flex-1 px-3 py-2 border rounded-lg text-sm" value="${GEMINI_API_KEY}">
+        <button id="salvarChave" class="bg-primary text-white px-3 py-2 rounded-lg text-sm">Salvar</button>
+      </div>
+      <p class="text-xs text-slate-400 mt-1">A chave fica salva só aqui no seu navegador, nunca é enviada para o código do GitHub ✅</p>
+    </details>
+  `;
+  form.before(areaConfig);
+
+  document.getElementById('salvarChave').addEventListener('click', () => {
+    const chave = document.getElementById('campoChave').value.trim();
+    if (chave) {
+      GEMINI_API_KEY = chave;
+      localStorage.setItem('gemini_api_key', chave);
+      toast('Chave salva! ✅ Gemini ativado 💙');
+      areaConfig.innerHTML = areaConfig.innerHTML.replace('(⚠️ Não configurada)', '(✅ Ativada)');
+    } else {
+      GEMINI_API_KEY = '';
+      localStorage.removeItem('gemini_api_key');
+      toast('Chave removida ⚠️ Usando respostas locais');
+    }
+  });
+
+  // Chips
   const chipsContainer = document.getElementById('chatChips');
-  [
-    'Postagem Lavagem Prata 15%',
-    'Postagem Lavagem Ouro 10%',
-    'Postagem Higienização VIP',
-    'Lista de serviços',
-    'Como agendar?'
-  ].forEach(texto => {
+  ['Lavagem Prata 15%', 'Lavagem Ouro 10%', 'Higienização VIP', 'Lista de serviços', 'Como agendar?'].forEach(texto => {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'px-2 py-1 bg-sky-100 text-cleandark rounded-full text-xs hover:bg-primary hover:text-white transition';
@@ -211,21 +210,22 @@ export function iniciarDola({ copiar, salvarPedido, toast }) {
 
     const indicador = document.createElement('div');
     indicador.className = 'flex justify-start';
-    indicador.innerHTML = `<div class="bg-white px-4 py-3 rounded-2xl text-sm text-slate-400">💙 Preparando…</div>`;
+    indicador.innerHTML = `<div class="bg-white px-4 py-3 rounded-2xl text-sm text-slate-400">💙 ${GEMINI_API_KEY ? 'Consultando…' : 'Preparando…'}</div>`;
     caixaMensagens.appendChild(indicador);
     caixaMensagens.scrollTop = caixaMensagens.scrollHeight;
 
-    // Pequeno delay natural
-    await new Promise(r => setTimeout(r, 400));
-    
-    const resposta = gerarResposta(textoUsuario);
-    
+    let resposta = await chamarGemini(textoUsuario, historico);
+    if (!resposta) resposta = respostaLocal(textoUsuario);
+
     indicador.remove();
     adicionarMensagem(resposta);
 
+    historico.push({usuario:true, texto:textoUsuario});
+    historico.push({usuario:false, texto:resposta});
+    if (historico.length > 10) historico.splice(0,2);
+
     salvarPedido('Assistente', textoUsuario);
 
-    // Botão copiar
     const ultimo = caixaMensagens.lastElementChild;
     const btnCopiar = document.createElement('button');
     btnCopiar.className = 'text-xs text-primary mt-2 hover:underline';
@@ -241,17 +241,17 @@ export function iniciarDola({ copiar, salvarPedido, toast }) {
     await processar(texto);
   });
 
-  // Boas-vindas
   setTimeout(() => {
     adicionarMensagem(`Olá! 💙 Tudo seguro e funcionando! 🚗✨
+
+${GEMINI_API_KEY 
+  ? '✅ Gemini ativado — respostas inteligentes e personalizadas' 
+  : '⚠️ Cole sua chave do Gemini acima para respostas mais inteligentes'}
 
 Como usar:
 • Digita o serviço + desconto → "Lavagem Prata 15%"
 • Eu formato prontinho → você copia e posta
-• Sem chaves, sem risco, tudo seguro!
-
-Exemplo:
-> "Postagem Lavagem Ouro com 10% de desconto"
+• Escreve qualquer texto que eu organizo com o link
 
 O que precisa hoje? 😊`);
   }, 300);
