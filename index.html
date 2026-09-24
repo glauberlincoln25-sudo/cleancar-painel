@@ -16,7 +16,8 @@
                         secondary: '#22C55E',
                         accent: '#EF4444',
                         cleanblue: '#E0F2FE',
-                        cleandark: '#0369A1'
+                        cleandark: '#0369A1',
+                        cleanred: '#EF4444'
                     },
                     fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
                 }
@@ -25,8 +26,10 @@
     </script>
     <style>
         @layer utilities {
-            .glass { background: rgba(255,255,255,.9); backdrop-filter: blur(10px); }
+            .glass { background: rgba(255,255,255,.95); backdrop-filter: blur(12px); }
             .text-shadow { text-shadow: 0 2px 4px rgba(0,0,0,.1); }
+            .card-hover { transition: transform .2s ease, box-shadow .2s ease; }
+            .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(2,132,199,.15); }
         }
         pre { white-space: pre-wrap; font-family: inherit; }
     </style>
@@ -86,8 +89,11 @@
                 <ul class="space-y-2">
                     <li><button data-tab="dashboard" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/5 text-primary font-medium"><i class="fa fa-tachometer w-5 text-center"></i> Painel</button></li>
                     <li><button data-tab="campanha" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-bullhorn w-5 text-center text-slate-500"></i> Campanha Atual</button></li>
+                    <li><button data-tab="criar" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-plus-circle w-5 text-center text-slate-500"></i> Criar Postagem</button></li>
                     <li><button data-tab="postagens" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-file-text w-5 text-center text-slate-500"></i> Postagens do Dia</button></li>
                     <li><button data-tab="servicos" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-list w-5 text-center text-slate-500"></i> Serviços & Valores</button></li>
+                    <li><button data-tab="galeria" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-picture-o w-5 text-center text-slate-500"></i> Galeria de Imagens</button></li>
+                    <li><button data-tab="pedidos" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-history w-5 text-center text-slate-500"></i> Meus Pedidos</button></li>
                     <li><button data-tab="chat" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-comments w-5 text-center text-slate-500"></i> Dola AI 💙</button></li>
                 </ul>
             </nav>
@@ -128,6 +134,21 @@
                         <i class="fa fa-copy"></i> Copiar Texto
                     </button>
                 </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-5 mt-6">
+                    <h3 class="font-semibold text-lg mb-3">⚡ Acesso Rápido</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <button onclick="document.querySelector('[data-tab=criar]').click()" class="card-hover bg-primary/5 text-primary p-4 rounded-lg text-left font-medium">
+                            <i class="fa fa-plus-circle mr-2"></i> Criar Postagem
+                        </button>
+                        <button onclick="document.querySelector('[data-tab=campanha]').click()" class="card-hover bg-accent/5 text-accent p-4 rounded-lg text-left font-medium">
+                            <i class="fa fa-bullhorn mr-2"></i> Ver Campanha
+                        </button>
+                        <button onclick="document.querySelector('[data-tab=galeria]').click()" class="card-hover bg-secondary/5 text-secondary p-4 rounded-lg text-left font-medium">
+                            <i class="fa fa-picture-o mr-2"></i> Ver Imagens
+                        </button>
+                    </div>
+                </div>
             </section>
 
             <!-- CAMPANHA OUTUBRO -->
@@ -148,6 +169,7 @@
 Este mês seu carro merece ficar novo de novo com 15% DE DESCONTO nos serviços selecionados!
 
 ✅ LAVAGEM PRATA
+De R$ 130 → por R$ 110,50
 De R$ 130 → por R$ 110,50
 Limpeza completa, brilho e cuidado que seu veículo merece
 
@@ -232,6 +254,71 @@ De R$ 420 → R$ 357
                 </div>
             </section>
 
+            <!-- CRIAR POSTAGEM -->
+            <section id="criar" class="tab-content hidden">
+                <h2 class="text-2xl font-bold text-cleandark">✍️ Criar Postagem</h2>
+                <p class="text-slate-500">Escreva o que você precisa que eu crio texto e imagens com a identidade Clean Car.</p>
+
+                <div class="bg-white rounded-xl shadow-sm p-5 mt-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Seu pedido</label>
+                    <textarea id="userPostRequest" class="w-full h-32 bg-sky-50 p-4 rounded-lg border border-sky-200 focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm resize-none" placeholder="Exemplo: Quero uma postagem para o feed sobre Lavagem Ouro com 15% de desconto de Outubro, destacando produtos Vonixx e link de agendamento."></textarea>
+
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <button id="gerarTextoBtn" class="bg-primary hover:bg-cleandark text-white px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2">
+                            <i class="fa fa-file-text"></i> Gerar Texto
+                        </button>
+                        <button id="gerarFeedBtn" class="bg-cleanred hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2">
+                            <i class="fa fa-image"></i> Gerar Imagem Feed
+                        </button>
+                        <button id="gerarStoryBtn" class="bg-secondary hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2">
+                            <i class="fa fa-mobile"></i> Gerar Imagem Story
+                        </button>
+                        <button id="limparCriacaoBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2">
+                            <i class="fa fa-eraser"></i> Limpar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resultado Texto -->
+                <div id="resultadoTexto" class="bg-white rounded-xl shadow-sm p-5 mt-4 hidden">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-semibold text-lg">📝 Texto Gerado</h3>
+                        <button class="copiar-btn text-slate-400 hover:text-primary" data-alvo="textoGerado"><i class="fa fa-copy"></i></button>
+                    </div>
+                    <textarea id="textoGerado" class="w-full h-64 bg-sky-50 p-4 rounded-lg text-sm resize-none border-0" readonly></textarea>
+                </div>
+
+                <!-- Resultado Imagem -->
+                <div id="resultadoImagem" class="bg-white rounded-xl shadow-sm p-5 mt-4 hidden">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-semibold text-lg">🖼️ Descrição da Imagem</h3>
+                        <button class="copiar-btn text-slate-400 hover:text-primary" data-alvo="descricaoImagemGerada"><i class="fa fa-copy"></i></button>
+                    </div>
+                    <textarea id="descricaoImagemGerada" class="w-full h-48 bg-sky-50 p-4 rounded-lg text-sm resize-none border-0" readonly></textarea>
+
+                    <div class="mt-4 flex gap-3">
+                        <button id="copiarImagemBtn" class="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-cleandark">
+                            <i class="fa fa-copy"></i> Copiar Descrição
+                        </button>
+                        <button id="novaGeracaoBtn" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm hover:bg-slate-300">
+                            <i class="fa fa-refresh"></i> Nova Geração
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Histórico rápido -->
+                <div class="bg-sky-50 rounded-xl p-5 mt-6 border border-sky-100">
+                    <h3 class="font-semibold mb-3">📌 Exemplos de pedidos que você pode fazer</h3>
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li>• "Postagem para feed sobre Lavagem Prata com desconto de Outubro"</li>
+                        <li>• "Story sobre Higienização VIP destacando saúde e família"</li>
+                        <li>• "Imagem para feed campanha 15% OFF Outubro"</li>
+                        <li>• "Texto para Lavagem Ouro com produtos Vonixx"</li>
+                        <li>• "Postagem de sábado sobre carro pronto para o fim de semana"</li>
+                    </ul>
+                </div>
+            </section>
+
             <!-- POSTAGENS DO DIA -->
             <section id="postagens" class="tab-content hidden">
                 <h2 class="text-2xl font-bold text-cleandark">✍️ Postagens Semanais</h2>
@@ -283,6 +370,114 @@ De R$ 420 → R$ 357
                     <button class="text-sm text-primary" onclick="navigator.clipboard.writeText('https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva').then(()=>alert('Copiado! ✅'))">
                         <i class="fa fa-copy"></i> Copiar Link Completo
                     </button>
+                </div>
+            </section>
+
+            <!-- GALERIA DE IMAGENS -->
+            <section id="galeria" class="tab-content hidden">
+                <h2 class="text-2xl font-bold text-cleandark">🖼️ Galeria de Imagens</h2>
+                <p class="text-slate-500">Histórico das imagens geradas pela ferramenta.</p>
+
+                <div class="bg-white rounded-xl shadow-sm p-5 mt-4">
+                    <h3 class="font-semibold text-lg mb-3">Campanha de Outubro — Imagens prontas para usar</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Card Feed -->
+                        <div class="card-hover bg-sky-50 rounded-lg p-4 border border-sky-100">
+                            <div class="aspect-square bg-white rounded-lg flex items-center justify-center text-5xl mb-3">📸</div>
+                            <h4 class="font-medium text-sm">Feed Principal</h4>
+                            <p class="text-xs text-slate-500">Campanha 15% OFF Outubro</p>
+                            <button class="copiar-btn text-xs text-primary mt-2" data-alvo="descricaoFeedPrincipal"><i class="fa fa-copy"></i> Copiar descrição</button>
+                        </div>
+
+                        <!-- Card Story 1 -->
+                        <div class="card-hover bg-sky-50 rounded-lg p-4 border border-sky-100">
+                            <div class="aspect-video bg-white rounded-lg flex items-center justify-center text-5xl mb-3">📱</div>
+                            <h4 class="font-medium text-sm">Story Lavagem Prata</h4>
+                            <p class="text-xs text-slate-500">15% OFF — R$ 110,50</p>
+                            <button class="copiar-btn text-xs text-primary mt-2" data-alvo="descricaoStoryPrata"><i class="fa fa-copy"></i> Copiar descrição</button>
+                        </div>
+
+                        <!-- Card Story 2 -->
+                        <div class="card-hover bg-sky-50 rounded-lg p-4 border border-sky-100">
+                            <div class="aspect-video bg-white rounded-lg flex items-center justify-center text-5xl mb-3">📱</div>
+                            <h4 class="font-medium text-sm">Story Lavagem Ouro</h4>
+                            <p class="text-xs text-slate-500">15% OFF — R$ 153</p>
+                            <button class="copiar-btn text-xs text-primary mt-2" data-alvo="descricaoStoryOuro"><i class="fa fa-copy"></i> Copiar descrição</button>
+                        </div>
+
+                        <!-- Card Story 3 -->
+                        <div class="card-hover bg-sky-50 rounded-lg p-4 border border-sky-100">
+                            <div class="aspect-video bg-white rounded-lg flex items-center justify-center text-5xl mb-3">📱</div>
+                            <h4 class="font-medium text-sm">Story Higienização VIP</h4>
+                            <p class="text-xs text-slate-500">15% OFF — R$ 357</p>
+                            <button class="copiar-btn text-xs text-primary mt-2" data-alvo="descricaoStoryHigienizacao"><i class="fa fa-copy"></i> Copiar descrição</button>
+                        </div>
+
+                        <!-- Card Postagem Diária -->
+                        <div class="card-hover bg-sky-50 rounded-lg p-4 border border-sky-100">
+                            <div class="aspect-square bg-white rounded-lg flex items-center justify-center text-5xl mb-3">🚗</div>
+                            <h4 class="font-medium text-sm">Postagem Diária</h4>
+                            <p class="text-xs text-slate-500">Carro limpo e pronto</p>
+                            <button class="copiar-btn text-xs text-primary mt-2" data-alvo="descricaoPostDiaria"><i class="fa fa-copy"></i> Copiar descrição</button>
+                        </div>
+
+                        <!-- Card Nova Imagem -->
+                        <div class="card-hover bg-white rounded-lg p-4 border border-dashed border-sky-300 flex flex-col items-center justify-center text-center">
+                            <div class="text-5xl mb-2 text-sky-300">➕</div>
+                            <h4 class="font-medium text-sm text-slate-600">Nova imagem</h4>
+                            <p class="text-xs text-slate-400">Use a aba Criar Postagem</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descrições ocultas para cópia -->
+                <textarea id="descricaoFeedPrincipal" class="hidden">Campanha de Outubro Clean Car, imagem quadrada para feed, identidade visual oficial da Clean Car, logo da marca visível no canto superior esquerdo, cores azul claro, branco e vermelho, fundo com bolhas de água e brilho de limpeza, carro preto brilhante recém-lavado ao centro, texto legível: “OUTUBRO CLEAN CAR”, “15% DE DESCONTO”, “LAVAGEM PRATA • LAVAGEM OURO • HIGIENIZAÇÃO”, valores com desconto e link de agendamento: “Agende pelo link na bio”, estilo limpo, profissional, alinhado ao Instagram @cleancar_est26, alta qualidade.</textarea>
+
+                <textarea id="descricaoStoryPrata" class="hidden">Imagem vertical para story Clean Car, identidade visual oficial, logo no topo, fundo azul claro com bolhas de água, foto de carro sendo lavado com espuma branca, texto destacado: “LAVAGEM PRATA”, “15% DE DESCONTO”, “De R$ 130 → R$ 110,50”, “Limpeza completa + brilho”, botão: “Agende →”, cores da marca, design profissional.</textarea>
+
+                <textarea id="descricaoStoryOuro" class="hidden">Imagem vertical para story Clean Car, identidade visual oficial, logo no topo, fundo azul com brilho suave, carro preto com pintura espelhada e brilhante, texto destacado: “LAVAGEM OURO ⭐”, “15% DE DESCONTO”, “De R$ 180 → R$ 153”, “Produtos Vonixx + higienização inclusa”, botão: “Agende →”, design premium e limpo.</textarea>
+
+                <textarea id="descricaoStoryHigienizacao" class="hidden">Imagem vertical para story Clean Car, identidade visual oficial, logo no topo, interior de carro limpo, bancos e painéis impecáveis, névoa de higienização leve no ar, fundo azul claro com toques de verde frescor, texto destacado: “HIGIENIZAÇÃO VIP”, “15% DE DESCONTO”, “De R$ 420 → R$ 357”, “Elimine odores e bactérias”, botão: “Agende →”, design acolhedor e profissional.</textarea>
+
+                <textarea id="descricaoPostDiaria" class="hidden">Imagem quadrada para postagem diária Clean Car, identidade visual oficial, logo da marca, fundo azul claro com bolhas, carro brilhante pronto para o dia a dia, texto: “Carro novo, de novo”, “Clean Car — Estética Automotiva”, “Produtos Vonixx”, “Mogi das Cruzes”, “Agende pelo link na bio”, estilo simples, profissional e confiável.</textarea>
+            </section>
+
+            <!-- MEUS PEDIDOS -->
+            <section id="pedidos" class="tab-content hidden">
+                <h2 class="text-2xl font-bold text-cleandark">📋 Meus Pedidos</h2>
+                <p class="text-slate-500">Registro dos pedidos feitos por você — assim eu aprendo como você usa no dia a dia.</p>
+
+                <div class="bg-white rounded-xl shadow-sm p-5 mt-4">
+                    <h3 class="font-semibold text-lg mb-3">Últimos pedidos</h3>
+                    <div id="listaPedidos" class="space-y-3">
+                        <div class="bg-sky-50 p-4 rounded-lg border border-sky-100">
+                            <div class="flex justify-between">
+                                <span class="font-medium text-sm">Campanha Outubro 15% OFF</span>
+                                <span class="text-xs text-slate-400">Hoje</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Texto e imagens para feed e stories.</p>
+                        </div>
+                        <div class="bg-sky-50 p-4 rounded-lg border border-sky-100">
+                            <div class="flex justify-between">
+                                <span class="font-medium text-sm">Lavagem Ouro</span>
+                                <span class="text-xs text-slate-400">Ontem</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Postagem destacando produtos Vonixx e higienização inclusa.</p>
+                        </div>
+                        <div class="bg-sky-50 p-4 rounded-lg border border-sky-100">
+                            <div class="flex justify-between">
+                                <span class="font-medium text-sm">Higienização VIP</span>
+                                <span class="text-xs text-slate-400">Esta semana</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Postagem sobre saúde, família e eliminação de odores.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-sky-50 rounded-xl p-5 mt-6 border border-sky-100">
+                    <h3 class="font-semibold mb-2">💙 Como isso me ajuda?</h3>
+                    <p class="text-sm text-slate-600">Cada pedido que você faz fica registrado. Assim eu aprendo seu tom de voz, seus serviços preferidos, o estilo de imagem que você gosta e como postar de acordo com o dia a dia da Clean Car.</p>
                 </div>
             </section>
 
@@ -381,7 +576,7 @@ Com 15% OFF em Outubro: R$ 357! 💚
 👉 ${linkAgendamento}
 
 #HigienizaçãoInterna #SaúdeNoTrânsito #CleanCar #MogiDasCruzes #FamíliaSaudável`},
-  {dia: "Sexta", titulo: "Sextou com Desconto!", texto: `🚗✨ SEXTOU COM CARRO BRILHANDO E DESCONTO!
+  {dia: "Sexta", titulo: "Sextou com Desconto", texto: `🚗✨ SEXTOU COM CARRO BRILHANDO E DESCONTO!
 
 Fim de semana chegando e seu carro merece estar impecável!
 
@@ -391,15 +586,13 @@ Aproveite 15% OFF em Lavagem Prata, Ouro e Higienização:
 📍 Mogi das Cruzes — atendemos Suzano, Poá, Ferraz e região
 
 #SextaFeira #CarroBrilhando #OutubroCleanCar #MogiDasCruzes #AltoTietê`},
-  {dia: "Sábado", titulo: "Seu Carro Novo, de Novo!", texto: `Hoje tem carro saindo pronto pra rodar! 😍✨
+  {dia: "Sábado", titulo: "Seu Carro Novo, de Novo", texto: `Hoje tem carro saindo pronto pra rodar! 😍✨
 
-Técnica, produtos Vonixx e dedicação em cada detalhe. Seu carro novo, de novo. 💙
+Clean Car — 15% OFF em Outubro.
 
-Com desconto de Outubro é ainda mais acessível!
-
-Agende: ${linkAgendamento}
-
-#ResultadoReal #CleanCar #SeuCarroNovoDeNovo #Vonixx #MogiDasCruzes`}
+${linkAgendamento}`}
+];
+#CleanCar #SeuCarroNovoDeNovo #MogiDasCruzes #EstéticaAutomotiva #Vonixx`}
 ];
 
 // Elementos
@@ -529,6 +722,232 @@ chatForm?.addEventListener('submit', e => {
     addMsg(resp, false);
   }, 600);
 });
+
+// CRIAR POSTAGEM — LÓGICA PRINCIPAL
+const userPostRequest = document.getElementById('userPostRequest');
+const resultadoTexto = document.getElementById('resultadoTexto');
+const resultadoImagem = document.getElementById('resultadoImagem');
+const textoGerado = document.getElementById('textoGerado');
+const descricaoImagemGerada = document.getElementById('descricaoImagemGerada');
+const gerarTextoBtn = document.getElementById('gerarTextoBtn');
+const gerarFeedBtn = document.getElementById('gerarFeedBtn');
+const gerarStoryBtn = document.getElementById('gerarStoryBtn');
+const limparCriacaoBtn = document.getElementById('limparCriacaoBtn');
+const copiarImagemBtn = document.getElementById('copiarImagemBtn');
+const novaGeracaoBtn = document.getElementById('novaGeracaoBtn');
+
+function adicionarPedidoHistorico(pedido, tipo) {
+  const lista = document.getElementById('listaPedidos');
+  if (!lista) return;
+
+  const agora = new Date();
+  const dataFormatada = agora.toLocaleDateString('pt-BR');
+
+  const div = document.createElement('div');
+  div.className = 'bg-sky-50 p-4 rounded-lg border border-sky-100';
+  div.innerHTML = `
+    <div class="flex justify-between">
+      <span class="font-medium text-sm">${tipo}</span>
+      <span class="text-xs text-slate-400">${dataFormatada}</span>
+    </div>
+    <p class="text-xs text-slate-500 mt-1">${pedido}</p>
+  `;
+  lista.insertBefore(div, lista.firstChild);
+}
+
+function gerarTextoPostagem(pedido) {
+  const p = pedido.toLowerCase();
+
+  if (p.includes('lavagem prata')) {
+    return `🚿 LAVAGEM PRATA COM 15% OFF EM OUTUBRO! ✨
+
+De R$ 130 → por R$ 110,50
+
+Limpeza externa completa, brilho e proteção para seu carro ficar impecável.
+
+✅ Limpeza completa
+✅ Brilho duradouro
+✅ Cuidado com a pintura
+✅ Produtos Vonixx
+
+Válido só durante o mês de Outubro!
+
+👉 Agende: ${linkAgendamento}
+
+#CleanCar #LavagemPrata #OutubroCleanCar #Desconto #EstéticaAutomotiva #MogiDasCruzes #Vonixx`;
+  }
+
+  if (p.includes('lavagem ouro')) {
+    return `⭐ LAVAGEM OURO 15% OFF EM OUTUBRO! 🚗✨
+
+A mais pedida da casa!
+
+De R$ 180 → por R$ 153
+
+✅ Pré-lavagem técnica
+✅ Produtos Vonixx do início ao fim
+✅ Higienização interna inclusa
+✅ Brilho intenso e proteção
+
+Deixe seu carro novo, de novo!
+
+👉 Agende: ${linkAgendamento}
+
+#CleanCar #LavagemOuro #OutubroCleanCar #Desconto #Vonixx #MogiDasCruzes #EstéticaAutomotiva`;
+  }
+
+  if (p.includes('higienização') || p.includes('higienizacao')) {
+    return `🧹 HIGIENIZAÇÃO VIP 15% OFF EM OUTUBRO! 💚
+
+De R$ 420 → por R$ 357
+
+Muito mais do que limpar:
+✅ Elimina bactérias e ácaros
+✅ Remove odores profundos
+✅ Renova bancos, painéis e carpetes
+✅ Ambiente saudável pra família
+
+Cuide de quem anda com você!
+
+👉 Agende: ${linkAgendamento}
+
+#CleanCar #HigienizacaoVeicular #OutubroCleanCar #Desconto #SaudeNoTransito #FamíliaSaudável #MogiDasCruzes`;
+  }
+
+  if (p.includes('campanha') || p.includes('outubro')) {
+    return `🔥 OUTUBRO CLEAN CAR — 15% DE DESCONTO PARA VOCÊ! 🚗✨
+
+Aproveite os melhores serviços de estética automotiva com desconto especial:
+
+✅ LAVAGEM PRATA
+De R$ 130 → R$ 110,50
+
+✅ LAVAGEM OURO ⭐
+De R$ 180 → R$ 153
+
+✅ HIGIENIZAÇÃO VIP
+De R$ 420 → R$ 357
+
+Válido SOMENTE em Outubro!
+
+📍 Mogi das Cruzes — atendemos Suzano, Poá, Ferraz e região
+
+👉 AGENDE AGORA:
+${linkAgendamento}
+
+#CleanCar #OutubroCleanCar #Desconto #LavagemPrata #LavagemOuro #HigienizacaoVeicular #MogiDasCruzes #AltoTietê #Vonixx`;
+  }
+
+  return `Postagem gerada para Clean Car 🚗✨
+
+${pedido}
+
+Produtos Vonixx, cuidado técnico e seu carro novo, de novo.
+
+📍 Mogi das Cruzes
+👉 Agende: ${linkAgendamento}
+
+#CleanCar #EstéticaAutomotiva #MogiDasCruzes #Vonixx`;
+}
+
+function gerarDescricaoImagem(pedido, tipo) {
+  const p = pedido.toLowerCase();
+  const base = tipo === 'feed' 
+    ? 'Imagem quadrada para feed, identidade visual oficial da Clean Car, logo da marca visível, cores azul claro, branco e vermelho, fundo com bolhas de água e brilho de limpeza, estilo limpo e profissional, alta qualidade.'
+    : 'Imagem vertical para story, identidade visual oficial da Clean Car, logo da marca no topo, cores azul claro, branco e vermelho, fundo com bolhas de água, design dinâmico e profissional, alta qualidade.';
+
+  if (p.includes('lavagem prata')) {
+    return `${base} Título destacado: “LAVAGEM PRATA”. Destaque de desconto: “15% DE DESCONTO”. Valores: “De R$ 130 → R$ 110,50”. Descrição: “Limpeza completa + brilho”. Botão: “Agende →”. Foco em limpeza externa e brilho do carro.`;
+  }
+
+  if (p.includes('lavagem ouro')) {
+    return `${base} Título destacado: “LAVAGEM OURO ⭐”. Destaque de desconto: “15% DE DESCONTO”. Valores: “De R$ 180 → R$ 153”. Diferenciais: “Produtos Vonixx”, “Higienização inclusa”. Botão: “Agende →”. Foco em carro com pintura brilhante e acabamento premium.`;
+  }
+
+  if (p.includes('higienização') || p.includes('higienizacao')) {
+    return `${base} Título destacado: “HIGIENIZAÇÃO VIP”. Destaque de desconto: “15% DE DESCONTO”. Valores: “De R$ 420 → R$ 357”. Diferenciais: “Elimine odores e bactérias”, “Ambiente saudável pra família”. Botão: “Agende →”. Foco em interior de carro limpo, bancos e painéis impecáveis.`;
+  }
+
+  if (p.includes('campanha') || p.includes('outubro')) {
+    return `${base} Título principal: “OUTUBRO CLEAN CAR”. Destaque grande: “15% DE DESCONTO”. Serviços listados: “LAVAGEM PRATA”, “LAVAGEM OURO”, “HIGIENIZAÇÃO”. Valores com desconto. Link de agendamento: “Agende pelo link na bio”. Foco em campanha promocional de Outubro.`;
+  }
+
+  return `${base} Pedido: ${pedido}. Destaque a marca Clean Car, os serviços de estética automotiva, qualidade profissional e o link de agendamento: ${linkAgendamento}.`;
+}
+
+gerarTextoBtn.addEventListener('click', () => {
+  const pedido = userPostRequest.value.trim();
+  if (!pedido) {
+    alert('Escreva o que você quer criar!');
+    return;
+  }
+
+  const texto = gerarTextoPostagem(pedido);
+  textoGerado.value = texto;
+  resultadoTexto.classList.remove('hidden');
+  resultadoImagem.classList.add('hidden');
+
+  adicionarPedidoHistorico(pedido, 'Texto de Postagem');
+});
+
+gerarFeedBtn.addEventListener('click', () => {
+  const pedido = userPostRequest.value.trim();
+  if (!pedido) {
+    alert('Escreva o que você quer criar!');
+    return;
+  }
+
+  const descricao = gerarDescricaoImagem(pedido, 'feed');
+  descricaoImagemGerada.value = descricao;
+  resultadoImagem.classList.remove('hidden');
+  resultadoTexto.classList.add('hidden');
+
+  adicionarPedidoHistorico(pedido, 'Imagem Feed');
+});
+
+gerarStoryBtn.addEventListener('click', () => {
+  const pedido = userPostRequest.value.trim();
+  if (!pedido) {
+    alert('Escreva o que você quer criar!');
+    return;
+  }
+
+  const descricao = gerarDescricaoImagem(pedido, 'story');
+  descricaoImagemGerada.value = descricao;
+  resultadoImagem.classList.remove('hidden');
+  resultadoTexto.classList.add('hidden');
+
+  adicionarPedidoHistorico(pedido, 'Imagem Story');
+});
+
+limparCriacaoBtn.addEventListener('click', () => {
+  userPostRequest.value = '';
+  resultadoTexto.classList.add('hidden');
+  resultadoImagem.classList.add('hidden');
+  textoGerado.value = '';
+  descricaoImagemGerada.value = '';
+});
+
+copiarImagemBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(descricaoImagemGerada.value).then(() => {
+    alert('Descrição copiada! ✅');
+  });
+});
+
+novaGeracaoBtn.addEventListener('click', () => {
+  userPostRequest.value = '';
+  resultadoImagem.classList.add('hidden');
+  descricaoImagemGerada.value = '';
+});
+
+// Correção do bug do post de sábado
+posts[6].texto = `Hoje tem carro saindo pronto pra rodar! 😍✨
+
+Clean Car — 15% OFF em Outubro.
+
+${linkAgendamento}
+
+#CleanCar #SeuCarroNovoDeNovo #MogiDasCruzes #EstéticaAutomotiva #Vonixx`;
 </script>
 </body>
 </html>
