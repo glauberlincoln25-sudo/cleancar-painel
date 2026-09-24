@@ -233,15 +233,14 @@ https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
 
 <script>
 // ==============================================
-// 🔴 COLOQUE SUAS CHAVES DO SUPABASE ABAIXO!
+// SEUS DADOS DO SUPABASE — JÁ PREENCHIDOS ✅
 // ==============================================
-const SUPABASE_URL = 'COLOQUE_SUA_URL_AQUI';
-const SUPABASE_KEY = 'COLOQUE_SUA_CHAVE_PUBLICA_AQUI';
+const SUPABASE_URL = 'https://qpuwfnbszvocfntudcdc.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwdXdmbmJzenZvY2ZudHVkY2RjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNjkwMTksImV4cCI6MjEwNTg0NTAxOX0.pWGOFmPng0JfBYmTbkIn0baiUKH6Qu_CyzPGRdsnPEA';
 
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const linkAgendamento = "https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva";
 
-// Estado
 let currentUserId = null;
 
 // ==============================================
@@ -350,21 +349,20 @@ async function renderizarPedidos() {
 function gerarTexto(pedido) {
   const p = pedido.toLowerCase();
   if (p.includes('lavagem prata')) return `🚿 LAVAGEM PRATA 15% OFF!\nDe R$ 130 → R$ 110,50\n\nLimpeza completa + brilho.\n\n👉 ${linkAgendamento}\n\n#CleanCar #LavagemPrata #MogiDasCruzes`;
-  if (p.includes('lavagem ouro')) return `⭐ LAVAGEM OURO 15% OFF!\nDe R$ 180 → R$ 153\n\nPré-lavagem + Vonixx + Higienização inclusa.\n\n👉 ${linkAgendamento}\n\n#CleanCar #LavagemOuro #Vonixx`;
+  if (p.includes('lavagem ouro')) return `⭐ LAVAGEM OURO 15% OFF!\nDe R$ 180 → R$ 153\n\nPré-lavagem + produtos Vonixx + Higienização inclusa.\n\n👉 ${linkAgendamento}\n\n#CleanCar #LavagemOuro #Vonixx`;
   if (p.includes('higienização') || p.includes('higienizacao')) return `🧹 HIGIENIZAÇÃO VIP 15% OFF!\nDe R$ 420 → R$ 357\n\nElimine odores e bactérias — saúde pra sua família 💚\n\n👉 ${linkAgendamento}\n\n#CleanCar #Higienizacao #SaudeNoTransito`;
   if (p.includes('campanha') || p.includes('outubro')) return `🔥 OUTUBRO CLEAN CAR — 15% OFF!\n\n✅ Prata: R$ 110,50\n✅ Ouro: R$ 153\n✅ VIP: R$ 357\n\n👉 ${linkAgendamento}\n\n#CleanCar #OutubroCleanCar #MogiDasCruzes`;
-  return `🚗✨ ${pedido}\n\nClean Car — Produtos Vonixx, cuidado profissional.\n\n👉 ${linkAgendamento}\n\n#CleanCar #EstéticaAutomotiva #MogiDasCruzes`;
+  return `🚗✨ ${pedido}\n\nClean Car — Produtos Vonixx, cuidado profissional.\n\n👉 ${linkAgendamento}\n\n#CleanCar #EsteticaAutomotiva #MogiDasCruzes`;
 }
 function gerarDescImagem(pedido, tipo) {
   const formato = tipo === 'feed' ? 'quadrada' : 'vertical';
-  return `Imagem ${formato} para ${tipo}, identidade Clean Car — logo, cores azul/branco, estilo profissional. ${pedido}. Link: ${linkAgendamento}`;
+  return `Imagem ${formato} para ${tipo}, identidade Clean Car — logo, cores azul e branco, estilo profissional. ${pedido}. Link: ${linkAgendamento}`;
 }
 
 // ==============================================
 // EVENTOS
 // ==============================================
 
-// Login ↔ Cadastro
 document.getElementById('goToRegister').addEventListener('click', () => {
   document.getElementById('loginForm').classList.add('hidden');
   document.getElementById('registerForm').classList.remove('hidden');
@@ -374,7 +372,6 @@ document.getElementById('goToLogin').addEventListener('click', () => {
   document.getElementById('loginForm').classList.remove('hidden');
 });
 
-// Cadastro
 document.getElementById('registerForm').addEventListener('submit', async e => {
   e.preventDefault();
   const user = document.getElementById('newUsername').value.trim();
@@ -400,7 +397,6 @@ document.getElementById('registerForm').addEventListener('submit', async e => {
   document.getElementById('loginForm').classList.remove('hidden');
 });
 
-// Login
 document.getElementById('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
   const user = document.getElementById('username').value.trim();
@@ -408,7 +404,6 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
   
   let res = await logar(user, pass);
   
-  // Cria usuário padrão na primeira vez
   if (res.erro && user === 'admin' && pass === 'cleancar2026') {
     res = await criarUsuario('admin', 'cleancar2026');
   }
@@ -432,7 +427,6 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
   renderizarPedidos();
 });
 
-// Logout
 document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('cleancar_user');
   localStorage.removeItem('cleancar_id');
@@ -441,7 +435,6 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   document.getElementById('loginScreen').classList.remove('hidden');
 });
 
-// Alterar senha
 document.getElementById('settingsBtn').addEventListener('click', () => {
   document.getElementById('settingsModal').classList.remove('hidden');
 });
@@ -479,7 +472,6 @@ document.getElementById('changePasswordForm').addEventListener('submit', async e
   msgDiv.classList.remove('hidden');
 });
 
-// Abas
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const aba = btn.getAttribute('data-tab');
@@ -495,7 +487,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// Botões de geração
 document.getElementById('btnTexto').addEventListener('click', async () => {
   const pedido = document.getElementById('userRequest').value.trim();
   if (!pedido) return alert('Escreva o que precisa!');
@@ -524,7 +515,6 @@ document.getElementById('btnStory').addEventListener('click', async () => {
   renderizarPedidos();
 });
 
-// Auto-login
 window.addEventListener('load', async () => {
   const savedId = localStorage.getItem('cleancar_id');
   const savedUser = localStorage.getItem('cleancar_user');
