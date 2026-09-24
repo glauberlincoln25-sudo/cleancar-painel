@@ -1,5 +1,4 @@
 import CONFIG from './config.js';
-import { listarPedidos } from './supabase-db.js';
 
 const REPO = 'glauberlincoln25-sudo/cleancar-painel';
 
@@ -11,11 +10,6 @@ async function verificar() {
   else p.push({ prio: 'Média', titulo: 'Fechar cadastros abertos e apagar a tabela users antiga', motivo: 'Depois do login novo, a tabela antiga não é mais necessária e guarda senhas em texto puro.' });
   p.push({ prio: diasParaVirar <= 7 ? 'Alta' : 'Média', titulo: 'Campanhas editáveis (trocar o mês sem mexer no código)', motivo: `A campanha "Outubro 15% OFF" está fixa no código. Faltam ${diasParaVirar} dia(s) para o mês virar.` });
   p.push({ prio: 'Média', titulo: 'QR code do agendamento nas artes e link com UTM', motivo: 'Permite imprimir no balcão e saber de onde vêm os agendamentos.' });
-  try {
-    const pedidos = await listarPedidos();
-    const semana = pedidos.filter(x => Date.now() - new Date(x.created_at) < 7 * 864e5).length;
-    if (semana === 0) p.push({ prio: 'Média', titulo: 'Calendário semanal com lembrete de postagem', motivo: 'Nenhum pedido de conteúdo nos últimos 7 dias.' });
-  } catch { /* sem conexão: segue sem essa checagem */ }
   return p;
 }
 
@@ -49,7 +43,7 @@ export function iniciarMelhorias({ toast, copiar }) {
         const pedido = `Claude, autorizo executar esta melhoria no painel Clean Car: ${pr.titulo}`;
         copiar(pedido);
         window.open(`https://github.com/${REPO}/issues/new?title=${encodeURIComponent('Melhoria autorizada: ' + pr.titulo)}&body=${encodeURIComponent(pr.motivo + '\n\nAutorizado pelo painel em ' + new Date().toLocaleString('pt-BR'))}`, '_blank', 'noopener');
-        toast('Autorizada! Cole no chat com o Claude para ele executar.');
+        toast('Autorizada! Volte ao chat e diga: executar melhorias autorizadas.');
       });
       card.append(t, m, b);
       lista.appendChild(card);

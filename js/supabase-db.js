@@ -63,6 +63,28 @@ export async function salvarPedido(tipo, conteudo) {
 export async function listarPedidos() {
   const u = await sessaoAtual();
   if (!u || !db) return [];
-  const { data } = await db.from('pedidos').select('*').eq('user_id', u.id).order('created_at', { ascending: false });
+  const { data } = await db.from('pedidos').select('*').eq('user_id', u.id).neq('tipo', 'Postado').order('created_at', { ascending: false });
   return data || [];
+}
+
+// Postagens marcadas como feitas ficam na tabela pedidos (tipo 'Postado', conteúdo = data AAAA-MM-DD).
+export async function listarPostados() {
+  const u = await sessaoAtual();
+  if (!u || !db) return [];
+  const { data } = await db.from('pedidos').select('conteudo').eq('user_id', u.id).eq('tipo', 'Postado');
+  return (data || []).map(x => x.conteudo);
+}
+
+export async function marcarPostado(dia) {
+  const u = await sessaoAtual();
+  if (!u || !db) return false;
+  const { error } = await db.from('pedidos').insert({ user_id: u.id, tipo: 'Postado', conteudo: dia });
+  return !error;
+}
+
+export async function desmarcarPostado(dia) {
+  const u = await sessaoAtual();
+  if (!u || !db) return false;
+  const { error } = await db.from('pedidos').delete().eq('user_id', u.id).eq('tipo', 'Postado').eq('conteudo', dia);
+  return !error;
 }

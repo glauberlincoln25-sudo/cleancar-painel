@@ -122,6 +122,7 @@
                     <li><button data-tab="criar" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-plus-circle w-5 text-center text-slate-500"></i> Criar Postagem</button></li>
                     <li><button data-tab="postagens" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-file-text w-5 text-center text-slate-500"></i> Postagens</button></li>
                     <li><button data-tab="pedidos" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-history w-5 text-center text-slate-500"></i> Meus Pedidos</button></li>
+                    <li><button data-tab="calendario" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-calendar w-5 text-center text-slate-500"></i> Calendário</button></li>
                     <li><button data-tab="chat" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-comments w-5 text-center text-slate-500"></i> Dola IA</button></li>
                     <li><button data-tab="melhorias" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sky-50"><i class="fa fa-magic w-5 text-center text-slate-500"></i> Melhorias</button></li>
                 </ul>
@@ -154,6 +155,7 @@
                     <button id="btnCopiarHoje" class="mt-4 bg-primary text-white px-4 py-2 rounded-lg text-sm">
                         <i class="fa fa-copy"></i> Copiar Texto
                     </button>
+                    <p id="lembreteHoje" class="text-sm mt-3"></p>
                 </div>
             </section>
 
@@ -229,9 +231,20 @@ https://www.gbr-sistemas.tec.br/agendar?e=cleancaresteticaautomotiva
                     </form>
                 </div>
             </section>
+            <section id="calendario" class="tab-content hidden">
+                <h2 class="text-2xl font-bold text-cleandark">📅 Calendário da semana</h2>
+                <p id="resumoSemana" class="text-slate-500"></p>
+                <div id="gradeSemana" class="grid gap-3 mt-4 sm:grid-cols-2 xl:grid-cols-3"></div>
+                <div class="bg-white rounded-xl shadow-sm p-4 mt-6 flex flex-wrap items-center gap-3">
+                    <span class="font-semibold">⏰ Lembrete diário</span>
+                    <input type="time" id="horaLembrete" value="10:00" class="px-3 py-2 rounded-lg border border-sky-200">
+                    <button id="btnLembrete" class="bg-primary text-white px-4 py-2 rounded-lg text-sm"><i class="fa fa-calendar-plus-o"></i> Criar no Google Agenda</button>
+                </div>
+            </section>
+
             <section id="melhorias" class="tab-content hidden">
                 <h2 class="text-2xl font-bold text-cleandark">🛠️ Melhorias da Dola</h2>
-                <p class="text-slate-500">A Dola verifica o painel e propõe melhorias. Você autoriza e ela envia o pedido pronto para execução.</p>
+                <p class="text-slate-500">A Dola verifica o painel e propõe melhorias. Ao autorizar, o pedido entra na fila do GitHub (Issues) e o texto é copiado. Depois, é só pedir no chat: “executar melhorias autorizadas”.</p>
                 <p id="infoVersao" class="text-xs text-slate-400 mt-1"></p>
                 <div id="listaMelhorias" class="space-y-3 mt-4"></div>
             </section>
@@ -258,6 +271,7 @@ import { criarUsuario, logar, sair, salvarPedido, listarPedidos, sessaoAtual } f
 import { getPostDoDia, POSTS_SEMANAIS, gerarTextoPersonalizado, gerarPromptImagem } from './js/content-generator.js';
 import { iniciarDola } from './js/dola.js';
 import { iniciarMelhorias } from './js/melhorias.js';
+import { iniciarCalendario, atualizarCalendario } from './js/calendario.js';
 import { montarArte, achaServico } from './js/arte.js';
 
 function toast(msg, tipo = 'ok') {
@@ -279,6 +293,7 @@ function mostrarApp(nomeUsuario) {
   carregarPostDoDia();
   carregarListaPosts();
   renderizarPedidos();
+  atualizarCalendario();
 }
 
 async function init() {
@@ -286,6 +301,7 @@ async function init() {
   extras();
   iniciarDola({ copiar, salvarPedido, toast });
   iniciarMelhorias({ toast, copiar });
+  iniciarCalendario({ copiar, toast });
   document.getElementById('diaSemana').textContent = getPostDoDia().dia;
   const u = await sessaoAtual();
   if (u) mostrarApp(u.username);
